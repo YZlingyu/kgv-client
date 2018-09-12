@@ -1,5 +1,24 @@
 <template>
 <el-container style="height:100%;">
+  <el-dialog
+    title="提示"
+    :visible.sync="dialogVisible"
+    width="30%"
+    :before-close="handleClose2">
+    <span>请选择产业</span>
+    <el-select v-model="technology" placeholder="请选择">
+    <el-option
+      v-for="item in technologys"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+    <span slot="footer" class="dialog-footer" style="display:flex;justify-content: center;">
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    </span>
+  </el-dialog>
   <el-header>
     <admin-header></admin-header>
   </el-header>
@@ -52,25 +71,64 @@
         <div class="left-bar" ref="leftBar" :style="{height:clientHeight+'px'}">
           <div class="left-bar-content">
             <div class="table-list-wrapper">
-              <div class="item item-title">技术链</div>
-              <ul>
+              <div class="item item-title">产业链</div>
               <!-- <li class="item table-list-item"><a>外勤工作表</a></li> -->
-              <li class="item table-list-item"><a>人工智能</a></li>
-              </ul>
+              <div style="height: 50px; line-height: 50px;background-color: #ccc;text-align:center;">人工智能</div>
             </div>
             <div class="field-wrapper">
-              <div class="item item-title">字段</div>
-              <div class="dimension-wrapper">
-              <div class="item dimension-name">维度</div>
-                <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
-              </div>
-              <div class="measure-wrapper">
-              <div class="item measure-name">度量</div>
-              <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
-              </li>
+              <div class="item item-title">工作表</div>
+                <el-collapse v-model="activeName" accordion>
+                  <el-collapse-item title="一致性 Consistency" name="1" style="background-color: rgb(84, 92, 100);">
+                    <div class="item item-title">字段</div>
+                    <div class="dimension-wrapper">
+                      <div class="item dimension-name">维度</div>
+                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
+                    </div>
+                    <div class="measure-wrapper">
+                      <div class="item measure-name">度量</div>
+                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
+                      </li>
+                    </div>
+                  </el-collapse-item>
+                  <el-collapse-item title="反馈 Feedback" name="2">
+                    <div class="item item-title">字段</div>
+                    <div class="dimension-wrapper">
+                      <div class="item dimension-name">维度</div>
+                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
+                    </div>
+                    <div class="measure-wrapper">
+                      <div class="item measure-name">度量</div>
+                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
+                      </li>
+                    </div>
+                  </el-collapse-item>
+                  <el-collapse-item title="效率 Efficiency" name="3">
+                    <div class="item item-title">字段</div>
+                    <div class="dimension-wrapper">
+                      <div class="item dimension-name">维度</div>
+                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
+                    </div>
+                    <div class="measure-wrapper">
+                      <div class="item measure-name">度量</div>
+                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
+                      </li>
+                    </div>
+                  </el-collapse-item>
+                  <el-collapse-item title="可控 Controllability" name="4">
+                   <div class="item item-title">字段</div>
+                    <div class="dimension-wrapper">
+                      <div class="item dimension-name">维度</div>
+                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
+                    </div>
+                    <div class="measure-wrapper">
+                      <div class="item measure-name">度量</div>
+                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
+                      </li>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
               </div>
             </div>
-          </div>
         </div>
         <div class="main-content" ref="mainContent" :style="{height:clientHeight+'px'}">
           <div class="drag-wrapper">
@@ -115,6 +173,15 @@
   export default {
     data() {
       return {
+        technologys: [{
+          value: 1,
+          label: '人工智能'
+        }, {
+          value: 2,
+          label: '新材料'
+        }],
+        technology: '',
+        dialogVisible: true,
         show: 1,
         activeName: 'first',
         showFlag: true,
@@ -165,13 +232,20 @@
     }
     },
     methods: {
+      handleClose2(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-       _init(){
+      _init(){
         window.addEventListener('resize', function() {
               this.myChart.resize();
             }.bind(this))
@@ -370,6 +444,7 @@
       }
     },
     created(){//初始化标签位置
+      
       // this.$http.get(BASE_URL+'all/columns?table_name='+this.tableName).then((response) => {
       //   var data = response.body;
       //   // console.log(response);
@@ -417,7 +492,7 @@ a
   text-align: center;
 .analysis
   position: fixed;
-  background-color: #F5F5F5;
+  background-color: #ffffff;
   margin: 20px auto;
   top: 60px;
   width: 100%;
@@ -428,10 +503,12 @@ a
     width: 200px;
     height: 100%;
     float: left;
-    background-color: #F5F5F5;
     color: #000;
     overflow-y: auto;
     // overflow-x: hidden;
+    .el-collapse-item__header
+      background-color: rgb(84, 92, 100);
+      color: #fff;
     .item
       height: 40px;
       line-height: 40px;
@@ -439,16 +516,18 @@ a
       text-align: center;
       a
         color: #7E8C8D;
+        // background-color: #ccc;
       a:hover
         display: block;
         height: 40px;
         line-height: 40px;
-        color: #fff;
+        background-color: #eee;
+        font-weight: bold;
         // background-color: rgba(255,255,255,0.3);
-        background-color: #2F456E;
     .item-title
       padding-left: 10px;
       text-align: left;
+      font-weight: bold;
   .main-content
     // flex: 1;
     // position: absolute;
@@ -459,7 +538,6 @@ a
     // right: 200px;
     height: 100%;
     padding: 5px 15px;
-    background-color: #F5F5F5;
     text-align: left;
     overflow: auto;
     // overflow-x: auto;
@@ -468,7 +546,7 @@ a
         height: 40px;
         min-width: 530px;
         line-height: 40px;
-        border-1px(#29A2E6);
+        border-1px(#ccc);
         .drag-title-label
           padding-right: 10px;
           color: #000;
@@ -489,7 +567,7 @@ a
           margin: 0 5px;
           padding: 0px 10px;
           a
-            color: #fff;
+            color: #000;
             font-weight: 700;
             .computed
               position: absolute;
@@ -506,24 +584,24 @@ a
                 width: 100%;
                 color: #314871;
               a:hover
-                background-color: #F5F5F5;
+                // background-color: #F5F5F5;
     .graph-wrapper
       min-width: 530px;
       min-height: 450px;
       .graph
         // min-width: 500px;
         // min-height: 400px;
-        width: 800px;
+        width: 700px;
         height: 400px;
         margin: 30px 15px 20px;
-        border: 1px solid #29A2E6; 
+        border: 1px solid #ccc; 
   .right-bar
     // flex: 0 0 200px;
     width: 200px;
     height: 100%;
     float: left;
     padding: 5px 5px 20px 5px;
-    background-color: #F5F5F5;
+    background-color: #ffffff;
     color: #000;
     overflow-y: auto;
     // overflow-x: hidden;

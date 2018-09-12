@@ -70,14 +70,29 @@
           <h1>请输入报告名称</h1>
           <el-input v-model="reportName" placeholder="请输入内容"></el-input>
           <h1>请选择报告所需图表</h1>
-          <el-row>
-            <div class="chart" data-index="1" @click="toggle($event)">
-            <div class="mask">
-              <div class="check">
-                <i class="el-icon-success"></i>
+          <el-row style="text-align: center;">
+            <el-checkbox-group v-model="checkList">
+              <div class="wrapper">
+                <div class="chart" data-index="1" id="bar"></div>
+                <el-checkbox label="柱状图"></el-checkbox>
               </div>
-            </div>
-          </div>
+              <div class="wrapper">
+                <div class="chart" id="radar" data-index="1"></div>
+                <el-checkbox label="雷达图"></el-checkbox>
+              </div>
+              <div class="wrapper">
+                <div class="chart" id="barLine" data-index="1"></div>
+                <el-checkbox label="柱线图"></el-checkbox>
+              </div>
+              <div class="wrapper">
+                <div class="chart" id="pie" data-index="1"></div>
+                <el-checkbox label="饼状图"></el-checkbox>
+              </div>
+              <div class="wrapper">
+                <div class="chart" id="stack" data-index="1"></div>
+                <el-checkbox label="堆积图"></el-checkbox>
+              </div>
+            </el-checkbox-group>
           </el-row>
           <el-row>
             <el-button class="btn-save" type="primary" round>提交</el-button>
@@ -127,7 +142,8 @@
           label: '北京烤鸭'
         }],
         industryValue: '',
-        reportName: ''
+        reportName: '',
+        checkList: []
       }
     },
     computed:{
@@ -141,41 +157,9 @@
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-      drawTree(data){
+      drawRadar(id, indicator, data){
         var echarts = require('echarts/lib/echarts');
-        var myChart = echarts.init(document.getElementById('main'));
-        myChart.showLoading();
-        myChart.hideLoading();
-
-          var option = {
-              tooltip: {
-                  trigger: 'item',
-                  triggerOn: 'mousemove'
-              },
-              series: [
-                  {
-                      type: 'tree',
-                      legend: {
-                        width: 700,
-                        height: 300,
-                        orient: 'horizontal'
-                      },
-                      data: [data],
-                      top: '18%',
-                      bottom: '14%',
-                      layout: 'radial',
-                      symbol: 'emptyCircle',
-                      symbolSize: 7,
-                      initialTreeDepth: 1,
-                      animationDurationUpdate: 750
-                  }
-              ]
-          }
-          myChart.setOption(option);
-      },
-      drawRadar(){
-        var echarts = require('echarts/lib/echarts');
-        var radarChart = echarts.init(document.getElementById('radar'));
+        var radarChart = echarts.init(document.getElementById(id));
         var option = {
               radar: {
                   // shape: 'circle',
@@ -210,9 +194,9 @@
 
         radarChart.setOption(option);
       },
-      drawBar(){
+      drawBar(id, datax,datay){
         var echarts = require('echarts/lib/echarts');
-        var barChart = echarts.init(document.getElementById('bar'));
+        var barChart = echarts.init(document.getElementById(id));
         var option = {
             color: ['#3398DB'],
             tooltip : {
@@ -230,7 +214,7 @@
             xAxis : [
                 {
                     type : 'category',
-                    data : ['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],
+                    data : datax,
                     axisTick: {
                         alignWithLabel: true
                     }
@@ -245,7 +229,7 @@
                 {
                     type:'bar',
                     barWidth: '60%',
-                    data:[10, 24, 8, 2, 0, 16]
+                    data:datay
                 }
             ]
         };
@@ -351,9 +335,6 @@
         var echarts = require('echarts/lib/echarts');
         var pieChart = echarts.init(document.getElementById(id));
         var option = {
-              title: {
-                  text: '堆叠区域图'
-              },
               tooltip : {
                   trigger: 'axis',
                   axisPointer: {
@@ -435,19 +416,6 @@
           };
         pieChart.setOption(option);
       },
-      toggle(event){
-        // console.log(event.target.getAttribute("data-index"))
-        // console.log(event.target.children[0].className);
-        var self;
-        self = event.target.children[0];
-        // console.log(event.target.children[0])
-        if(event.target.children[0].className == "mask"){
-            self.style.display = "block";
-        }else{
-            event.target.parentNode.style.display="none";
-            // console.log(event.target.parentNode)
-        }
-      },
       getIndustries(){
         axios.get(common.url1+"findCompanyByCompany",{
           datatype:'jsonp',
@@ -503,11 +471,19 @@
       }
     },
     created(){//初始化标签位置
-
     },
     mounted(){
       this.entity = this.$route.query.entity;
-      
+      this.drawRadar('radar');
+      this.drawBar('bar',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      this.drawBarLine("barLine", ['星期一','星期二','星期三','星期四'], [10,3,24,15]);
+      this.drawPie('pie',
+                ['支持政策','打压政策'],
+                [
+                    {value:335, name:'支持政策'},
+                    {value:310, name:'打压政策'}
+                ]);
+      this.drawStack('stack');
     },
     components:{
       adminHeader
@@ -532,7 +508,7 @@
      background-color: #D3DCE6;
      color: #333;
      text-align: center;
-     height: 100%;
+     min-height: 100%;
    }
    
    .el-main {
@@ -543,6 +519,7 @@
        width: 95%;
        margin: 10px auto;
        height: 100%;
+       overflow-y: scroll;
        border-radius: 15px;
        padding: 10px 20px;
        box-sizing: border-box;
@@ -554,27 +531,39 @@
        h1 {
         text-align: left;
        }
-       .chart {
-         width: 300px;
-         height: 250px;
-         border: 1px solid #eee;
-         position: relative;
-         .mask {
-           position: absolute;
-           top: 0;
-           left: 0;
-           width: 300px;
-           height: 250px;
-           background-color: rgba(0,0,0,0.2);
-           display: none;
-           .check {
-             line-height: 250px;
-           }
+       .wrapper {
+         float: left;
+         text-align: center;
+         margin-bottom: 20px;
+         h1{
+           text-align: center;
          }
-         .unchecked {
-           display: none;
-         }
+         .chart {
+          width: 332px;
+          height: 250px;
+          border: 1px solid #eee;
+          margin-right: 30px;
+          margin-bottom: 10px;
+          position: relative;
+          text-align: center;
+          .mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 250px;
+            background-color: rgba(0,0,0,0.2);
+            display: none;
+            .check {
+              line-height: 250px;
+            }
+          }
+          .unchecked {
+            display: none;
+          }
+        }
        }
+       
        .report{
          h1 {
            text-align: center;

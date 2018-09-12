@@ -1,12 +1,12 @@
 <template>
   <div class="right-bar-inner">
-      <button @click="savaGraph">保存</button>
+      <el-button type="primary" @click="savaGraph">保存</el-button>
   	  <div>
-        <div class="right-title">图表标题</div>
-        <input type="text" name="graph-title" style="width:100%">
+        <div class="right-title" style="font-weight: bold;">图表标题</div>
+        <el-input v-model="title" name="graph-title" style="width:100%"></el-input>
       </div>
       <div class="graph-type">
-        <div class="right-title">图表类型</div>
+        <div class="right-title" style="font-weight: bold;">图表类型</div>
         <div class="graph-content clearfix">
           <i class="icon-bar" @click="update(0)">
             <div class="angle"></div>
@@ -23,7 +23,7 @@
               <div>0个维度,多个度量</div>
             </div>
           </i>
-          <i class="icon-pie1_1"></i>
+          <!-- <i class="icon-pie1_1"></i> -->
           <i class="icon-column" @click="update(2)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
@@ -31,9 +31,9 @@
               <div>1个维度,1个或多个度量</div>
             </div>
           </i>
-          <i class="icon-funnel_1"></i>
-          <i class="icon-gauge_11"></i>
-          <i class="icon-graph_1"></i>
+          <!-- <i class="icon-funnel_1"></i>
+          <i class="icon-gauge_11"></i> -->
+          <!-- <i class="icon-graph_1"></i> -->
           <i class="icon-line" @click="update(4)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
@@ -41,7 +41,7 @@
               <div>1个维度,1个或多个度量</div>
             </div>
           </i>
-          <i class="icon-line1_1"></i>
+          <!-- <i class="icon-line1_1"></i> -->
           <i class="icon-lineStack" @click="update(6)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
@@ -49,26 +49,44 @@
               <div>1个维度,1个或多个度量</div>
             </div>
           </i>
-          <i class="icon-scatter_1"></i>
+          <!-- <i class="icon-scatter_1"></i> -->
         </div>
       </div>
       <!-- <div class="right-title"> -->
         <!-- <input type="checkbox" name="">显示图表标签 -->
       <!-- </div> -->
       <div class="axis" v-show="axisDisplay">
-        <div class="right-title">坐标轴</div>
-        <div class="right-title">标题<input type="text" name="axis-title" style="width:75%" v-model="axisTitle" @blur="updateAxisTitle(axisTitle)"></div>
-        <div class="right-title">单位<input type="text" name="unit" style="width:75%" v-model="axisUnit" @blur="updateAxisUnit(axisUnit)"></div>
-        <div class="right-title">最大值<input type="text" name="" style="width:45%">
+        <div class="right-title" style="font-weight: bold;">坐标轴</div>
+        <div class="right-title">标题
+          <el-input v-model="axisTitle" name="axis-title" style="width:75%" placeholder="请输入内容" @blur="updateAxisTitle(axisTitle)"></el-input>
+          <!-- <input type="text" name="axis-title" style="width:75%" v-model="axisTitle" @blur="updateAxisTitle(axisTitle)"> -->
+        </div>
+        <div class="right-title">单位
+          <el-input v-model="axisUnit" name="unit" style="width:75%" placeholder="请输入内容" @blur="updateAxisUnit(axisUnit)"></el-input>
+          <!-- <input type="text" name="unit" style="width:75%" v-model="axisUnit" @blur="updateAxisUnit(axisUnit)"> -->
+        </div>
+        <div class="right-title">最大值
+          <el-input name="" style="width:45%" v-model="max"></el-input>
+          <!-- <input type="text" name="" style="width:45%"> -->
         <input type="checkbox" name="">自动</div>
-        <div class="right-title">最小值<input type="text" name="" style="width:45%">
-        <input type="checkbox" name="">自动</div>
-      </div>
+        <div class="right-title">最小值
+          <!-- <input type="text" name="" style="width:45%"> -->
+          <el-input name="" style="width:45%" v-model="min"></el-input>
+          <input type="checkbox" name="">自动</div>
+        </div>
       <!-- <div class="right-title">辅助线</div> -->
       <div class="right-title"><input type="checkbox" name="">显示缩略轴</div>
       <div>
         <div class="right-title">图表备注</div>
-        <input type="text" name="" style="width:100%">
+        <el-input
+          type="textarea"
+          :rows="2"
+          placeholder="请输入内容"
+          v-model="note"
+          name="" 
+          style="width:100%">
+        </el-input>
+        <!-- <input type="text" name="" style="width:100%"> -->
       </div>
   </div>
 </template>
@@ -101,11 +119,15 @@ export default {
   },
   data() {
     return {
+      title: '',
       newOption: this.option,
       newType: this.type,
       axisDisplay: true,
       axisTitle: '',
-      axisUnit: ''
+      axisUnit: '',
+      min: 0,
+      max: 0,
+      note:''
     }
   },
   methods: {
@@ -211,7 +233,6 @@ export default {
     flex: 0 0 200px;
     width: 200px;
     padding: 5px 5px 20px 5px;
-    background-color: #F5F5F5;
     color: #000;
     overflow-y: auto;
     // overflow-x: hidden;
@@ -221,20 +242,20 @@ export default {
       text-align: left;
     input
       // margin-bottom: 45px;  
-      border-top:0px;   
-      border-right:0px;   
-      border-bottom:1px solid #29A2E6;   
-      border-left:0px;
-      background-color:transparent;
-      color: #000;
-      text-align: center;
+      // border-top:0px;   
+      // border-right:0px;   
+      // border-bottom:1px solid #cccccc;   
+      // border-left:0px;
+      // background-color:transparent;
+      // color: #000;
+      // text-align: center;
       &:focus
         border: 0;
     .graph-type
       .graph-content
         width: 90%;
-        height: 200px;
-        border: 1px solid #29A2E6;
+        height: 100px;
+        border: 1px solid #cccccc;
         [class^="icon-"]
           position: relative;
           cursor: pointer;

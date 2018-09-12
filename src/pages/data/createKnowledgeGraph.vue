@@ -341,18 +341,19 @@
             line-height: 30px;
             vertical-align: middle;
             margin-right: 20px;
-            .admin-input, .el-input {
-              display: inline-block;
-              width: 80%;
-              margin-bottom: 10px;
-            }
-            .admin-input2 {
-              margin-left: 20px;
-            }
-            .admin-input3 {
-              margin-left: 40px;
-            }
+            
           }
+        }
+        .admin-input, .el-input {
+          display: inline-block;
+          width: 80%;
+          margin-bottom: 10px;
+        }
+        .admin-input2 {
+          margin-left: 20px;
+        }
+        .admin-input3 {
+          margin-left: 40px;
         }
       }
       .admin-input, .el-input {

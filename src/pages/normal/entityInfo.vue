@@ -70,7 +70,7 @@
                 <div class="output-list" v-for="(item, index) in technologyList" :key="item.id">
                   <router-link :to="{path: './technology', query:{entity:item}}">
                     <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item}}</span>
+                    <span class="output-word">{{item.name}}</span>
                   </router-link>
                 </div>
               </div>
@@ -80,7 +80,7 @@
                 <div class="output-list" v-for="(item, index) in technologyList" :key="item.id">
                   <router-link :to="{path: './technology', query:{entity:item}}">
                     <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item}}</span>
+                    <span class="output-word">{{item.name}}</span>
                   </router-link>
                 </div>
               </div>
@@ -687,8 +687,10 @@
             
             if(res){
               // console.log(res.data)
-              for(var item of res.data.data) {
-                this.treeData.children[0].children.push({"name": item.name, "children": []});
+              if(res.data.code == 200){
+                for(var item of res.data.data) {
+                  this.treeData.children[0].children.push({"name": item.name, "children": []});
+                }
               }
               axios.get(common.url1+"findCompanyByTechnology",{
                 params:{
@@ -704,10 +706,12 @@
                 console.log(res.data.data)
                 this.technologyList = res.data.data;
                 // console.log(this.technologyList);
-                for(var technology of this.technologyList){
-                  if(technology){
-                    this.treeData.children[1].children.push({"name": technology, "children":[]});
-                  }else{
+                if(res.data.code == 200){
+                  for(var technology of this.technologyList){
+                    if(technology){
+                      this.treeData.children[1].children.push({"name": technology, "children":[]});
+                    }else{
+                    }
                   }
                 }
                 axios.get(common.url1+"findNewsByCompany",{
@@ -721,8 +725,10 @@
                   }
                 }).then((res, err) => {
                   console.log(res.data)
-                  for(var item of res.data.data) {
-                    this.treeData.children[2].children.push({"name": item.title, "children": []});
+                  if(res.data.code ==200){
+                    for(var item of res.data.data) {
+                      this.treeData.children[2].children.push({"name": item.title, "children": []});
+                    }
                   }
                 console.log(this.treeData);
                 this.drawTree(this.treeData);
@@ -746,8 +752,10 @@
             
             if(res){
               console.log(res.data)
-              for(var item of res.data.data) {
-                this.treeData.children[0].children.push({"name": item, "children": []});
+              if(res.data.code == 200){
+                for(var item of res.data.data) {
+                  this.treeData.children[0].children.push({"name": item, "children": []});
+                }
               }
               axios.get(common.url1+"findTechnologyChildrens",{
                 params:{
@@ -763,10 +771,12 @@
                 console.log(res.data.data)
                 this.technologyList = res.data.data;
                 // console.log(this.technologyList);
-                for(var technology of this.technologyList){
-                  if(technology){
-                    this.treeData.children[1].children.push({"name": technology, "children":[]});
-                  }else{
+                if(res.data.code == 200){
+                  for(var technology of this.technologyList){
+                    if(technology){
+                      this.treeData.children[1].children.push({"name": technology, "children":[]});
+                    }else{
+                    }
                   }
                 }
                 axios.get(common.url1+"findNewsByTechnology",{
@@ -780,8 +790,10 @@
                   }
                 }).then((res, err) => {
                   console.log(res.data)
-                  for(var item of res.data.data) {
-                    this.treeData.children[2].children.push({"name": item.title, "children": []});
+                  if(res.data.code == 200){
+                    for(var item of res.data.data) {
+                      this.treeData.children[2].children.push({"name": item.title, "children": []});
+                    }
                   }
                 console.log(this.treeData);
                 this.drawTree(this.treeData);

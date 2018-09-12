@@ -114,6 +114,8 @@
   #main {
     width: 900px;
     height: 900px;
+    text-align:center;
+    margin: 0 auto;
   }
   /* ---list--- */
   .list {
