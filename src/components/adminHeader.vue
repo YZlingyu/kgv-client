@@ -4,13 +4,15 @@
       <img src="../assets/logo.png" class="logo">
       <span class="name">中关村四方现代服务产业技术创新战略联盟</span>
       <div style="position: relative; float:right; width: 100px;">
-      <router-link to="#"><span class="name">登录</span></router-link>
+      <router-link to="#"><span class="name">admin</span></router-link>
       </div>
     </router-link>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
+  import * as common from '../common/common.js'
   export default {
     data() {
       return {
@@ -20,6 +22,19 @@
     },
     methods: {
     },   
+    mounted(){
+      axios.get(common.url3+"getUser",{
+          params:{
+            JSESSIONID: sessionStorage.sessionId
+          },
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(res);
+        })
+    }
   }
 </script>
 

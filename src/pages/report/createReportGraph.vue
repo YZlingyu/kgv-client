@@ -5,18 +5,42 @@
     :visible.sync="dialogVisible"
     width="30%"
     :before-close="handleClose2">
-    <span>请选择产业</span>
-    <el-select v-model="technology" placeholder="请选择">
-    <el-option
-      v-for="item in technologys"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
+    <span>请选择产业</span><br/>
+    <el-select v-model="technology" placeholder="请选择" style="width:100%; margin: 10px auto;" @change="chooseTechnologyChain">
+      <el-option
+        v-for="item in technologys"
+        :key="item.value"
+        :label="item.value"
+        :value="item.label">
+      </el-option>
+    </el-select><br/>
+    <span>请填写可视化工作表信息</span><br/>
+    <div class="worksheet" v-for="sheet in workSheet" :key="sheet.index">
+      <el-row class="axis-row">
+      <p>工作表名称：</p>
+      <el-input v-model="sheet.name" placeholder="请输入内容"></el-input>
+      <!-- <el-checkbox-group v-model="checkList" style="margin: 10px auto;">
+        <el-checkbox label="复选框 A"></el-checkbox>
+        <el-checkbox label="复选框 B"></el-checkbox>
+        <el-checkbox label="复选框 C"></el-checkbox>
+      </el-checkbox-group> -->
+    </el-row>
+    <el-row class="axis-row">
+      <p>维度</p>
+      <el-input v-model="sheet.abscissa" placeholder="请输入内容"></el-input>
+    </el-row>
+    <el-row class="axis-row">
+      <p>度量</p>
+      <el-input v-model="sheet.ordinate" placeholder="请输入内容"></el-input>
+    </el-row>
+    </div>
+    <el-row style="text-align:center;">
+      <i class="el-icon-circle-plus" style="margin: 10px auto; text-align: center;" @click="addWorkSheet"></i>
+    </el-row>
+    
     <span slot="footer" class="dialog-footer" style="display:flex;justify-content: center;">
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-button type="primary" @click="saveWorksheet">确 定</el-button>
     </span>
   </el-dialog>
   <el-header>
@@ -73,24 +97,24 @@
             <div class="table-list-wrapper">
               <div class="item item-title">产业链</div>
               <!-- <li class="item table-list-item"><a>外勤工作表</a></li> -->
-              <div style="height: 50px; line-height: 50px;background-color: #ccc;text-align:center;">人工智能</div>
+              <div style="height: 50px; line-height: 50px;background-color: #ccc;text-align:center;">{{technologyName}}</div>
             </div>
             <div class="field-wrapper">
               <div class="item item-title">工作表</div>
-                <el-collapse v-model="activeName" accordion>
-                  <el-collapse-item title="一致性 Consistency" name="1" style="background-color: rgb(84, 92, 100);">
+                <el-collapse v-model="activeName" accordion  v-for="sheet in workSheet" :key="sheet.index">
+                  <el-collapse-item :title=sheet.name name="1" style="background-color: rgb(84, 92, 100);">
                     <div class="item item-title">字段</div>
                     <div class="dimension-wrapper">
                       <div class="item dimension-name">维度</div>
-                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in dimensionList"><a :data-column="dimension.t_name">{{dimension.t_name}}</a></li>
+                      <li class="item dimension-item" draggable="true" @dragstart='drag1($event)' v-for="dimension in sheet.abscissa.split(',')"><a :data-column="dimension">{{dimension}}</a></li>
                     </div>
                     <div class="measure-wrapper">
                       <div class="item measure-name">度量</div>
-                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
+                      <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in sheet.ordinate.split(',')"><a :data-column="measure" class="measure-name">{{measure}}</a>
                       </li>
                     </div>
                   </el-collapse-item>
-                  <el-collapse-item title="反馈 Feedback" name="2">
+                  <!-- <el-collapse-item title="反馈 Feedback" name="2">
                     <div class="item item-title">字段</div>
                     <div class="dimension-wrapper">
                       <div class="item dimension-name">维度</div>
@@ -125,7 +149,7 @@
                       <li class="item measure-item" draggable="true" @dragstart='drag2($event)' v-for="measure in measureList"><a :data-column="measure.t_name" class="measure-name">{{measure.t_name}}</a>
                       </li>
                     </div>
-                  </el-collapse-item>
+                  </el-collapse-item> -->
                 </el-collapse>
               </div>
             </div>
@@ -169,18 +193,23 @@
   import echarts from 'echarts';
   import rightBar from './graph-right';
   import colorPicker from '../../components/plugin/vue-color-picker/colorPicker'
+  let qs = require("qs");
   var  BASE_URL ="http://127.0.0.1:8088/lxy/";
   export default {
     data() {
       return {
-        technologys: [{
-          value: 1,
-          label: '人工智能'
-        }, {
-          value: 2,
-          label: '新材料'
-        }],
+        technologys: [],
+        technologyChainNames: {},
         technology: '',
+        technologyName: '',
+        workSheet:[{
+          "name": "",
+          "abscissa": "",
+          "ordinate": "",
+          "technologyId": ""
+        }],
+        workSheetName: '',
+        checkList: [],
         dialogVisible: true,
         show: 1,
         activeName: 'first',
@@ -199,19 +228,7 @@
           series: []
         },//
         // optionUpdate: {},
-        dimensionList: [
-          {
-            t_name:"a"
-          },
-          {
-            t_name:"b"
-          },
-          {
-            t_name:"c"
-          },
-          {
-            t_name:"d"
-          }],
+        dimensionList: [],
         measureList: [],
         searchdimension: [],
         searchmeasure: [],
@@ -239,11 +256,42 @@
           })
           .catch(_ => {});
       },
+      saveWorksheet(){
+        // console.log()
+        for(var i=0; i<this.workSheet.length; i++){
+          this.workSheet[i].technologyId = this.technology;
+        }
+        // console.log(this.workSheet);
+        // axios.defaults.headers.post['Content-Type']='application/json;charse=UTF-8'
+        var datatosend = qs.stringify({
+              workCharts: this.workSheet
+            })
+        console.log(datatosend)
+        axios
+          .post(common.url2+"saveWorkChart/"+this.technology,this.workSheet)
+          .then(function(response) {
+            console.log(response)
+          })
+          .catch(function(error) {
+            console.log(error);
+            alert("error!");
+          });
+
+        this.dialogVisible = false;
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      addWorkSheet(){
+        this.workSheet.push({
+          "name": "",
+          "abscissa": "",
+          "ordinate": "",
+          "technologyId": ""
+        });
       },
       _init(){
         window.addEventListener('resize', function() {
@@ -278,6 +326,7 @@
       getData(table,type,dimension,measure,methods){ //获取拖拽后的数据，并生成图表
         this.$http.get(BASE_URL+'chart/query?dimension='+dimension+'&table='+table+'&type='+type+'&values='+measure+'&methods='+methods).then((response) => {
             var data = response.body;
+            console.log(data)
             this.option = this._deepCopy(data);
             // console.log(this.option);
             this.myChart.setOption(this.option,true);//true表示和之前的option合并
@@ -441,9 +490,55 @@
             }
         }
         return false;
-      }
+      },
+      chooseTechnologyChain(){
+        // console.log(this.technology);
+        // console.log(this.technologys);
+        for(var i=0; i<this.technologys.length; i++){
+          if(this.technologys[i].label == this.technology){
+            this.technologyName = this.technologys[i].value;
+          }
+        }
+        // console.log(this.technologyName);
+        // axios.get(common.url2+"getTechnologyChainByName",{
+        //   params:{
+        //     id: this.searchNode,
+        //     name: this.technologyChainNames[this.searchNode]
+        //   },
+        //   datatype:'jsonp',
+        //   headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded',
+        //   }
+        // }).then((res, err) => {
+        //   if(res){
+        //   }
+        //   else{
+        //     console.log(err);
+        //   }
+        // })
+      },
     },
     created(){//初始化标签位置
+       axios.get(common.url2+"getTechnologyList",{
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(res.data.data)
+          if(res){
+            for(var i=0;i<res.data.data.length; i++){
+              this.technologys.push({
+                value: res.data.data[i].name,
+                label: res.data.data[i].id
+              })
+            }
+            console.log(this.technologys)
+          }
+          else{
+            console.log(err);
+          }
+        })
       
       // this.$http.get(BASE_URL+'all/columns?table_name='+this.tableName).then((response) => {
       //   var data = response.body;

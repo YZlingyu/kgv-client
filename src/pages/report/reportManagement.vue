@@ -48,32 +48,36 @@
       </el-menu>
     </el-aside>
     <el-main>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>行业报告</el-breadcrumb-item>
+        <el-breadcrumb-item>报告管理</el-breadcrumb-item>
+      </el-breadcrumb>
       <div class="blank">
         <el-table
           :data="tableData"
-          border
-          style="width: 100%; text-align: center;">
+          border>
           <el-table-column
             fixed
             prop="name"
-            label="报告名称"
-            width="270">
+            label="创建时间"
+            width="280">
           </el-table-column>
           <el-table-column
             prop="date"
-            label="创建时间"
-            width="270">
+            label="报告名称"
+            width="280">
           </el-table-column>
           <el-table-column
             prop="region"
             label="报告领域"
-            width="270">
+            width="280">
           </el-table-column>
           <el-table-column
             label="操作"
-            width="200">
+            width="280">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+              <el-button @click="checkReport(scope.row)" type="text" size="small">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -94,20 +98,20 @@
         activeName: 'first',
         tableData: [{
           name: '2016-05-03',
-          date: '王小虎',
-          region: '上海'
+          date: '人工智能2018年工业报告v1.0',
+          region: '人工智能'
         }, {
           name: '2016-05-02',
-          date: '王小虎',
-          region: '上海'
+          date: '人工智能2017年工业报告v1.1',
+          region: '人工智能'
         }, {
           name: '2016-05-04',
-          date: '王小虎',
-          region: '上海'
+          date: '人工智能2017年工业报告v1.0',
+          region: '人工智能'
         }, {
           name: '2016-05-01',
-          date: '王小虎',
-          region: '上海'
+          date: '人工智能2016年工业报告v1.0',
+          region: '人工智能'
         }]
       }
     },
@@ -122,8 +126,9 @@
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-      handleClick(row) {
+      checkReport(row) {
         console.log(row);
+        this.$router.push({path: "./reportDetail"}) 
       }
     },
     created(){//初始化标签位置
@@ -167,12 +172,12 @@
        margin: 10px auto;
        height: 100%;
        border-radius: 15px;
-       padding: 10px;
+       padding: 30px;
        box-sizing: border-box;
        background-color: #fff;
        text-align: left;
-       .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell {
-         text-align: left !important;
+       .el-table__header {
+         width: 100% !important;
        }
      }
    }

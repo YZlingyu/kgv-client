@@ -51,56 +51,10 @@
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>行业报告</el-breadcrumb-item>
-        <el-breadcrumb-item>生成报告</el-breadcrumb-item>
+        <el-breadcrumb-item>报告管理</el-breadcrumb-item>
+        <el-breadcrumb-item>人工智能2018年工业报告v1.0</el-breadcrumb-item>
       </el-breadcrumb>
-      <!-- <el-row class="chooseRow">
-        
-      </el-row> -->
-      <el-row class="blank" v-show="show === 1">
-        <h1>请选择行业，生成报告</h1>
-        <el-select v-model="industryValue" placeholder="请选择">
-          <el-option
-            v-for="item in industries"
-            :key="item.value"
-            :label="item.value"
-            :value="item.label">
-          </el-option>
-        </el-select>
-        <div class="report-graph" id="">
-          <h1>请输入报告名称</h1>
-          <el-input v-model="reportName" placeholder="请输入内容"></el-input>
-          <h1>请选择报告所需图表</h1>
-          <el-row style="text-align: center;">
-            <el-checkbox-group v-model="checkList">
-              <div class="wrapper">
-                <div class="chart" data-index="1" id="bar"></div>
-                <el-checkbox label="柱状图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="radar" data-index="1"></div>
-                <el-checkbox label="雷达图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="barLine" data-index="1"></div>
-                <el-checkbox label="柱线图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="pie" data-index="1"></div>
-                <el-checkbox label="饼状图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="stack" data-index="1"></div>
-                <el-checkbox label="堆积图"></el-checkbox>
-              </div>
-            </el-checkbox-group>
-          </el-row>
-          <el-row>
-            <el-button class="btn-save" type="primary" round @click="changeBlank">提交</el-button>
-          </el-row>
-
-        </div>
-      </el-row>
-      <el-row class="blank" v-show="show === 2">
+      <el-row class="blank">
         <div class="report">
           <h1>人工智能2018年工业报告v1.0</h1>
           <el-row class="clearfloat">
@@ -131,17 +85,29 @@
 <script>
   import adminHeader from "../../components/adminHeader.vue"
   import axios from 'axios'
-  import $ from 'jquery';
   import * as common from '../../common/common.js'
   export default {
     data() {
       return {
         show: 1,
         activeName: 'first',
-        industries: [],
-        industryValue: '',
-        reportName: '',
-        checkList: []
+        tableData: [{
+          name: '2016-05-03',
+          date: '人工智能2018年工业报告v1.0',
+          region: '人工智能'
+        }, {
+          name: '2016-05-02',
+          date: '人工智能2017年工业报告v1.1',
+          region: '人工智能'
+        }, {
+          name: '2016-05-04',
+          date: '人工智能2017年工业报告v1.0',
+          region: '人工智能'
+        }, {
+          name: '2016-05-01',
+          date: '人工智能2016年工业报告v1.0',
+          region: '人工智能'
+        }]
       }
     },
     computed:{
@@ -155,10 +121,11 @@
       handleClose(key, keyPath) {
         console.log(key, keyPath);
       },
-      changeBlank() {
-        this.show = 2;
+      checkReport(row) {
+        console.log(row);
+        
       },
-      drawRadar(id, indicator, data){
+        drawRadar(id, indicator, data){
         var echarts = require('echarts/lib/echarts');
         var radarChart = echarts.init(document.getElementById(id));
         var option = {
@@ -416,95 +383,12 @@
               ]
           };
         pieChart.setOption(option);
-      },
-      getIndustries(){
-        axios.get(common.url1+"findCompanyByCompany",{
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          if(res){
-            console.log("these are the industries");
-          }
-          else{
-            console.log(err);
-          }
-        })
-      },
-      getGraphs(industry){
-        axios.get(common.url1+"findCompanyByCompany",{
-          params:{
-            industry : industry
-          },
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          if(res){
-            console.log("these are the graphs");
-          }
-          else{
-            console.log(err);
-          }
-        })
-      },
-      saveReport(){
-        axios.get(common.url1+"findCompanyByCompany",{
-          params:{
-            industry : this.industryValue,
-            name: this.reportName,
-            graphList: this.graphList
-          },
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          if(res){
-            console.log("these are the graphs");
-          }
-          else{
-            console.log(err);
-          }
-        })
       }
     },
     created(){//初始化标签位置
-      axios.get(common.url2+"getTechnologyList",{
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          console.log(res.data.data)
-          if(res){
-            for(var i=0;i<res.data.data.length; i++){
-              this.industries.push({
-                value: res.data.data[i].name,
-                label: res.data.data[i].id
-              })
-            }
-            console.log(this.industries)
-          }
-          else{
-            console.log(err);
-          }
-        })
     },
     mounted(){
       this.entity = this.$route.query.entity;
-      this.drawRadar('radar');
-      this.drawBar('bar',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawBarLine("barLine", ['星期一','星期二','星期三','星期四'], [10,3,24,15]);
-      this.drawPie('pie',
-                ['支持政策','打压政策'],
-                [
-                    {value:335, name:'支持政策'},
-                    {value:310, name:'打压政策'}
-                ]);
-      this.drawStack('stack');
       this.drawRadar('radar2');
       this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
       this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
@@ -526,16 +410,6 @@
     text-decoration: none;
     color: #999999;
   }
-  .clearfloat:after {
-    display:block;
-    clear:both;
-    content:"";
-    visibility:hidden;
-    height:0;
-  }
-  .clearfloat{
-    zoom:1;
-    }
   /* 布局 */
   .el-container {
     .el-header {
@@ -548,13 +422,13 @@
      background-color: #D3DCE6;
      color: #333;
      text-align: center;
-     min-height: 100%;
+     height: 100%;
    }
    
    .el-main {
      background-color: #E9EEF3;
      color: #333;
-     text-align: center;
+     text-align: left;
      .blank {
        width: 95%;
        margin: 10px auto;
@@ -564,33 +438,6 @@
        padding: 10px 20px;
        box-sizing: border-box;
        background-color: #fff;
-       .el-select {
-         width: 100%;
-       }
-       h1 {
-        text-align: left;
-       }
-       .wrapper {
-         float: left;
-         text-align: center;
-         margin-bottom: 20px;
-         h1{
-           text-align: center;
-         }
-         .chart, #pie {
-          width: 332px;
-          height: 250px;
-          border: 1px solid #eee;
-          margin-right: 30px;
-          margin-bottom: 10px;
-          position: relative;
-          text-align: center;
-          .unchecked {
-            display: none;
-          }
-        }
-       }
-       
        .report{
          h1 {
            text-align: center;
@@ -612,9 +459,6 @@
              float: right;
            }
        }
-     }
-     .btn-save{
-       margin: 20px auto 0 auto;
      }
    }
   }

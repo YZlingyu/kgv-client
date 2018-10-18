@@ -52,6 +52,15 @@
         <el-row>
           <el-col :span="16">
             <div class="admin-graph-background left">
+               <el-select v-model="searchNode" placeholder="请选择" style="width: 80%;">
+                <el-option
+                  v-for="item in technologyChainOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <el-button icon="el-icon-search" circle @click="chooseTechnologyChain"></el-button>
               <div id="graph"></div>
             </div>
           </el-col>
@@ -90,14 +99,14 @@
                     </el-col>
                   </el-row>
                   <div style="height:8px;"></div>
-                  <el-row>
+                  <!-- <el-row>
                     <el-col :span="8">
                       <p>Father:</p>
                     </el-col>
                     <el-col :span="14">
                       <el-input v-model="father" placeholder="" :disabled="true"></el-input>
                     </el-col>
-                  </el-row>
+                  </el-row> -->
                   <div style="height:8px;"></div>
                   <el-row>
                     <el-button type="primary" plain size="medium" class="size" @click="modify">修改
@@ -268,7 +277,7 @@
                     </el-row>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="企业选择" name="third">
+                <!-- <el-tab-pane label="企业选择" name="third">
                   <el-row>
                     <div class="title">填入要添加企业的节点ID</div>
                   </el-row>
@@ -301,7 +310,7 @@
                   <el-row>
                     <el-button type="primary" plain size="medium" @click="addcompany">确定</el-button>
                   </el-row>
-                </el-tab-pane>
+                </el-tab-pane> -->
               </el-tabs>
             </div>
           </el-col>
@@ -320,8 +329,27 @@
   export default {
     data() {
       return {
+        // technologyChainOptions: [{
+        //   value: '选项1',
+        //   label: '黄金糕'
+        // }, {
+        //   value: '选项2',
+        //   label: '双皮奶'
+        // }, {
+        //   value: '选项3',
+        //   label: '蚵仔煎'
+        // }, {
+        //   value: '选项4',
+        //   label: '龙须面'
+        // }, {
+        //   value: '选项5',
+        //   label: '北京烤鸭'
+        // }],
+        technologyChainOptions: [],
+        technologyChainNames: {},
         show: 1,
         activeName: 'first',
+        searchNode: '',
         label: "",
         name: "",
         id: "",
@@ -443,22 +471,55 @@
       }
     },
     methods: {
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
       handleClick(tab, event) {
-      //点击tab
-      var that = this;
-      console.log(tab, event);
-      document.getElementById("add").style.display = "none";
-      document.getElementById("r_add").style.display = "none";
-      axios
-        .post(common.url3+"find_enterprise")
-        .then(function(response) {
-          console.log(response)
-          that.companies = response.data.enterprises;
+        //点击tab
+        var that = this;
+        console.log(tab, event);
+        document.getElementById("add").style.display = "none";
+        document.getElementById("r_add").style.display = "none";
+        // axios
+        //   .post(common.url3+"find_enterprise")
+        //   .then(function(response) {
+        //     console.log(response)
+        //     that.companies = response.data.enterprises;
+        //   })
+        //   .catch(function(error) {
+        //     console.log(error);
+        //     alert("error!");
+        //   });
+      },
+      chooseTechnologyChain(){
+        console.log(this.searchNode)
+        console.log(this.technologyChainNames[this.searchNode])
+        axios.get(common.url2+"getTechnologyChainByName",{
+          params:{
+            id: this.searchNode,
+            name: this.technologyChainNames[this.searchNode]
+          },
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(JSON.parse(res.data.data.nodes), JSON.parse(res.data.data.Relations))
+         // JSON.parse
+    //       var nodes = '[ { "name": "专题服务", "type": 0    }, { "name": "生育调节" , "type": 1},{ "name": "围产医学" , "type": 1   }]';
+
+    // var edges = '[  { "source" : 0  , "target": 1, "rel":1 } , { "source" : 0  , "target": 2 , "rel":1}]';
+          if(res){
+            document.getElementById("graph").innerHTML = "";
+            this.draw(JSON.parse(res.data.data.nodes), JSON.parse(res.data.data.Relations));
+          }
+          else{
+            console.log(err);
+          }
         })
-        .catch(function(error) {
-          console.log(error);
-          alert("error!");
-        });
       },
       draw(nodes, edges) {
         var that = this;
@@ -492,12 +553,13 @@
           .style("stroke", "#d0d0d0")
           .style("stroke-width", 3.4)
           .on("click", function(d, i) {
-            that.rfather = edges[i].source.name;
-            that.rfatherid = edges[i].source.id;
-            that.rson = edges[i].target.name;
-            that.rsonid = edges[i].target.id;
-            that.rlabel = edges[i].rel;
-            that.rname = edges[i].properties.name;
+            console.log(d);
+            that.rfather = d.source.name;
+            that.rfatherid = d.source.id;
+            that.rson = d.target.name;
+            that.rsonid = d.target.id;
+            that.rlabel = d.rel;
+            that.rname = d.properties.name;
             that.activeName = "second";
             document.getElementById("r_add").style.display = "none";
           });
@@ -541,12 +603,12 @@
           .call(force.drag) ////使得节点能够拖动
           .on("click", function(d, i) {
             console.log(d)
-            that.name = nodes[i].name;
-            that.id = nodes[i].id;
-            that.label = nodes[i].type;
-            that.father = nodes[i].father;
+            that.name = d.name;
+            that.id = d.id;
+            that.label = d.type;
+            that.father = d.father;
             that.activeName = "first";
-            that.level = nodes[i].level;
+            that.level = d.level;
             document.getElementById("add").style.display = "none";
           });
 
@@ -614,24 +676,44 @@
       save() {
         //点击保存
         var that = this;
-        axios
-          .post(common.url3+"mod_node/"+this.id+"/"+this.name
-            // qs.stringify({
-            //   id: this.id,
-            //   name: this.name
-            // })
-          )
-          .then(function(response) {
-            console.log(response+1111111);
+
+        axios.get(common.url2+"updateTechnology",{
+          params:{
+            id: this.id,
+            name: this.name
+          },
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(res+1111111);
             that.disabledInput = true;
             alert("修改成功！");
-            document.getElementById("graph").innerHTML = "";
-            that.draw(response.data[0], response.data[1]);
-          })
-          .catch(function(error) {
+            // document.getElementById("graph").innerHTML = "";
+            // that.draw(response.data[0], response.data[1]);
+        }).catch(function(error) {
             console.log(error);
             alert("error!");
           });
+        // axios
+        //   .post(common.url2+"updateTechnology",
+        //     qs.stringify({
+        //       id: this.id,
+        //       name: this.name
+        //     })
+        //   )
+          // .then(function(response) {
+          //   console.log(response+1111111);
+          //   that.disabledInput = true;
+          //   alert("修改成功！");
+          //   document.getElementById("graph").innerHTML = "";
+          //   that.draw(response.data[0], response.data[1]);
+          // })
+          // .catch(function(error) {
+          //   console.log(error);
+          //   alert("error!");
+          // });
       },
 
       addyes() {
@@ -678,23 +760,35 @@
         })
           .then(() => {
             var that = this;
-            axios
-              .post(common.url3+"del_node/"+this.id
-                // qs.stringify({
-                //   // params: {
-                //   id: this.id
-                // })
-              )
-              .then(function(response) {
-                console.log(response);
+             axios.get(common.url2+"deleteTechnology",{
+              params:{
+                id: this.id
+              },
+              datatype:'jsonp',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              }
+            }).then((res, err) => {
+                console.log(res);
                 alert("删除成功！");
-                document.getElementById("graph").innerHTML = "";
-                that.draw(response.data[0], response.data[1]);
-              })
-              .catch(function(error) {
+                // document.getElementById("graph").innerHTML = "";
+                // that.draw(response.data[0], response.data[1]);
+            }).catch(function(error) {
                 console.log(error);
                 alert("error!");
               });
+            // axios
+            //   .post(common.url2+"deleteTechnology/"+this.id)
+            //   .then(function(response) {
+            //     console.log(response);
+            //     alert("删除成功！");
+            //     document.getElementById("graph").innerHTML = "";
+            //     // that.draw(response.data[0], response.data[1]);
+            //   })
+            //   .catch(function(error) {
+            //     console.log(error);
+            //     alert("error!");
+            //   });
           })
           .catch(() => {
             this.$message({
@@ -841,15 +935,36 @@
       }
     },
     created() {
-      this.draw();
+      // this.draw();
+      axios.get(common.url2+"getAllTechnologyNames",{
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(res.data.data)
+          this.technologyChainNames = res.data.data;
+          if(res){
+            for(var item in res.data.data){
+              this.technologyChainOptions.push({
+                value: item,
+                label: res.data.data[item]
+              })
+            }
+            console.log(this.technologyChainOptions)
+          }
+          else{
+            console.log(err);
+          }
+        })
     },
     mounted() {
-      axios
-        .post(common.url3+"graph")
-        .then(res => {
-          console.log(res.data);
-          this.draw(res.data[0], res.data[1]);
-        });
+      // axios
+      //   .post(common.url3+"graph")
+      //   .then(res => {
+      //     console.log(res.data);
+      //     this.draw(res.data[0], res.data[1]);
+      //   });
     },
     components:{
       adminHeader

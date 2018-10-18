@@ -20,12 +20,12 @@
         </el-menu-item>
         <el-menu-item index="2" @click="show=2">
           <i class="el-icon-menu"></i>
-          <span slot="title">相关分析</span>
+          <span slot="title">数据报表</span>
         </el-menu-item>
-        <!-- <el-menu-item index="3" @click="show=3">
+        <el-menu-item index="3" @click="show=3">
           <i class="el-icon-setting"></i>
-          <span slot="title">新闻视角</span>
-        </el-menu-item> -->
+          <span slot="title">行业报告</span>
+        </el-menu-item>
         <router-link to="./technologyChain">
           <el-menu-item index="4">
             <i class="el-icon-menu"></i>
@@ -59,7 +59,7 @@
                 <div class="output-list" v-for="(item, index) in enterpriseList" :key="item.id">
                   <router-link :to="{path: './company', query:{entity:item}}">
                     <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item}}</span>
+                    <span class="output-word">{{item.name}}</span>
                     <span class="tag" v-if="item.no">{{item.no}}</span>
                   </router-link>
                 </div>
@@ -115,7 +115,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-row v-show="show === 2">
+      <!-- <el-row v-show="show === 2">
         <div class="draw-canvas" style="float:left;">
           <h1>企业技术领域贡献</h1>
           <div id="radar"></div>
@@ -124,7 +124,7 @@
           <h1>企业领域成果输出量</h1>
           <div id="bar"></div>
         </div>
-      </el-row>
+      </el-row> -->
       <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业成果列表</h1>
@@ -154,7 +154,7 @@
             </el-table>
           </div>
         </el-row>
-        <el-row v-show="show === 2">
+        <!-- <el-row v-show="show === 2">
         <div class="draw-canvas" style="float:left;">
           <h1>企业领域专利输出量</h1>
           <div id="patentBar"></div>
@@ -163,7 +163,7 @@
           <h1>企业领域论文输出量</h1>
           <div id="paperBar"></div>
         </div>
-      </el-row>
+      </el-row> -->
       <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业专利列表</h1>
@@ -222,7 +222,7 @@
             </el-table>
           </div>
         </el-row>
-      <el-row v-show="show === 3">
+      <!-- <el-row v-show="show === 3">
         <el-col :span="16">
           <div class="news-card1">
             <h1 class="title">企业领域标签</h1>
@@ -251,8 +251,8 @@
             </div>
           </div>
         </el-col>
-      </el-row>
-      <el-row v-show="show === 3">
+      </el-row> -->
+      <!-- <el-row v-show="show ===2">
         <div class="draw-canvas" style="float:left;">
           <h1>企业获投金额</h1>
           <div id="getFundBar"></div>
@@ -261,8 +261,8 @@
           <h1>企业对外投资金额</h1>
           <div id="outFundBar"></div>
         </div>
-      </el-row>
-      <el-row v-show="show === 3">
+      </el-row> -->
+      <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业获投公司列表</h1>
             <el-table
@@ -291,7 +291,7 @@
             </el-table>
           </div>
         </el-row>
-        <el-row v-show="show === 3">
+        <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业投资公司列表</h1>
             <el-table
@@ -320,6 +320,61 @@
             </el-table>
           </div>
         </el-row>
+
+        <el-row v-show="show ===3">
+          <div class="blank">
+            <el-table
+              :data="tableData"
+              border>
+              <el-table-column
+                fixed
+                prop="name"
+                label="创建时间"
+                width="280">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                label="报告名称"
+                width="280">
+              </el-table-column>
+              <el-table-column
+                prop="region"
+                label="报告领域"
+                width="280">
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                width="240">
+                <template slot-scope="scope">
+                  <el-button @click="checkReport(scope.row)" type="text" size="small">查看</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-row>
+        <el-row v-show="show ===4" class="blank">
+          <div class="report">
+            <h1>人工智能2018年工业报告v1.0</h1>
+            <el-row class="clearfloat">
+              <div class="wrapper-sub">
+                <div class="report-chart" id="bar2"></div>
+                <h6>人工智能成果量统计图</h6>
+              </div>
+              <div class="wrapper-sub">
+                <div class="report-chart" id="bar3"></div>
+                <h6>chengguo</h6>
+              </div><br/>
+              <div class="wrapper-sub">
+                <div class="report-chart" id="radar2"></div>
+                <h6>chengguo</h6>
+              </div>
+              <div class="wrapper-sub">
+                <div class="report-chart" id="pie2"></div>
+                <h6>chengguo</h6>
+              </div>
+            </el-row>
+          </div>
+        </el-row>
     </el-main>
   </el-container>
 </el-container>
@@ -341,7 +396,22 @@
         enterpriseRange: '',
         technologyList: [],
         technologyLength: '',
-        newsList: [],
+        newsList: 
+        [{
+          title: "鸿海精密1000万美元收购中国AI初创企业",
+          time: "2018-08-22 08:50",
+          abs: "鸿海精密在台湾证交所公告称，其子公司以1000万美元收购北京蓦然认知科技有限公司的开曼子公司的12%股份，鸿海称此举为长期战略投资。sd"
+        },
+        {
+          title: "专访蓦然认知：AI是实现目的的工具 服务和产品才是未来",
+          time: "2017-10-30 12:12",
+          abs: "整整20年前IBM公司创造的超级计算机深蓝第一次战胜了国际象棋世界冠军卡斯帕罗夫，而今天我们用它的名字来命名这个全新的人工智能报道品牌。"
+        },
+        {
+          title: "【GGAI峰会】云知声、思必驰、蓦然认知齐聚开幕式，挑战智能语音新赛道",
+          time: "2017-10-19",
+          abs: "未来的AI落地产品方向，或者说是人机交互的方式，极可能是语音与视觉交互的深度融合，业界有机会来设计一种完全不一样的用户体验，和完全不同的产品认知。"
+        }],
         entity: '',
         absList: [],
         nodes: [],
@@ -459,7 +529,24 @@
         speedX:Math.PI/360,
         speedY:Math.PI/360,
         tags: [],
-        showNews: ''
+        showNews: '',
+        tableData: [{
+          name: '2016-05-03',
+          date: '人工智能2018年工业报告v1.0',
+          region: '人工智能'
+        }, {
+          name: '2016-05-02',
+          date: '人工智能2017年工业报告v1.1',
+          region: '人工智能'
+        }, {
+          name: '2016-05-04',
+          date: '人工智能2017年工业报告v1.0',
+          region: '人工智能'
+        }, {
+          name: '2016-05-01',
+          date: '人工智能2016年工业报告v1.0',
+          region: '人工智能'
+        }]
       }
     },
     computed:{
@@ -506,19 +593,23 @@
               'Content-Type': 'application/x-www-form-urlencoded',
             }
           }).then((res, err) => {
-            var self = this;
+            // var self = this;
             if(res){
               this.enterpriseList = res.data.data;
+              console.log(111111111111)
               console.log(res.data.data);
-              // this.nodeList = [];
+              this.nodeList = [];
               // self.enterpriseLength = res.data.data.length;
-              // this.enterpriseList.concat(res.data.data);
-              // for(var enterprise of this.enterpriseList){
-              //   if(enterprise){
-              //     this.treeData.push({"name": enterprise.name, "children": []});
-              //   }
-              //   this.drawTree(data);
+              // if(res.data.data.length !== 0){
+              //   this.enterpriseList.push(res.data.data);
               // }
+              console.log(this.enterpriseList)
+              for(var enterprise of this.enterpriseList){
+                if(enterprise){
+                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
             }
             else{
               console.log(err);
@@ -537,30 +628,56 @@
           }).then((res, err) => {
             if(res){
               this.enterpriseList = res.data.data;
-              console.log(res.data)
+              console.log(111111111111)
+              console.log(res.data.data.length);
+              this.nodeList = [];
+              self.enterpriseLength = res.data.data.length;
+              // if(res.data.data.length !== 0){
+              //   this.enterpriseList.push(res.data.data);
+              // }
+              console.log(this.enterpriseList)
+              for(var enterprise of this.enterpriseList){
+                if(enterprise){
+                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
             }
             else{
               console.log(err);
             }
           })
         }else if(this.type.id == 3){
-          // axios.get(common.url1+"findCompanyByCompany",{
-          //   params:{
-          //     company : e
-          //   },
-          //   datatype:'jsonp',
-          //   headers: {
-          //     'Content-Type': 'application/x-www-form-urlencoded',
-          //   }
-          // }).then((res, err) => {
-          //   if(res){
-          //     this.enterpriseList = res.data.data;
-          //     console.log(res.data)
-          //   }
-          //   else{
-          //     console.log(err);
-          //   }
-          // })
+          axios.get(common.url1+"findCompanyByCompany",{
+            params:{
+              company : e
+            },
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            if(res){
+              //  this.enterpriseList = res.data.data;
+              console.log(111111111111)
+              console.log(res.data.data.length);
+              this.nodeList = [];
+              self.enterpriseLength = res.data.data.length;
+              // if(res.data.data.length !== 0){
+              //   this.enterpriseList.push(res.data.data);
+              // }
+              console.log(this.enterpriseList)
+              for(var enterprise of this.enterpriseList){
+                if(enterprise){
+                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
+            }
+            else{
+              console.log(err);
+            }
+          })
         }else{
           alert("好像除了一些状况！");
         }
@@ -578,7 +695,19 @@
           }).then((res, err) => {
             if(res) {
               this.newsList = res.data.data;
-              console.log(res.data)
+              console.log(111111111111)
+              console.log(res.data.data.length);
+              this.nodeList = [];
+              if(res.data.data.length !== 0){
+                this.newsList.push(res.data.data);
+              }
+              console.log(this.newsList)
+              for(var news of this.newsList){
+                if(news){
+                  this.treeData.children[2].children.push({"name": news.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
             }
             else {
               console.log(err);
@@ -597,6 +726,7 @@
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         }).then((res, err) => {
+          console.log("@@@@@@@@@@@companydetail")
           if(res.data[0]){
             this.enterpriseDetail = res.data[0];
             this.enterpriseRange = res.data[0].opeRange.split("，");
@@ -620,52 +750,138 @@
             console.log(err);
         })
       },
-      getEnterprises(e){
-        var self = this;
-        axios.get(common.url2+"absImport/toName",{
-          params:{
-            name : e
-          },
-          datatype:'jsonp',
-          async: true,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          this.nodeList = [];
-           self.enterpriseLength = res.data.length;
-           this.enterpriseList.concat(res.data);
-           for(var enterprise of this.enterpriseList){
-             if(enterprise){
-               this.treeData.push({"name": enterprise.name, "children": []});
-             }
-             this.drawTree(data);
-           }
-        })
-      },
+      // getEnterprises(e){
+      //   var self = this;
+      //   axios.get(common.url2+"absImport/toName",{
+      //     params:{
+      //       name : e
+      //     },
+      //     datatype:'jsonp',
+      //     async: true,
+      //     headers: {
+      //       'Content-Type': 'application/x-www-form-urlencoded',
+      //     }
+      //   }).then((res, err) => {
+      //     console.log("@@@@@@@@@@@@@@@@@@@enterprise")
+      //     console.log(res.data)
+      //     this.nodeList = [];
+      //      self.enterpriseLength = res.data.length;
+      //      this.enterpriseList.concat(res.data);
+      //      for(var enterprise of this.enterpriseList){
+      //        if(enterprise){
+      //          this.treeData.push({"name": enterprise.name, "children": []});
+      //        }
+      //        this.drawTree(data);
+      //      }
+      //   })
+      // },
       getTechnologies(e){
-        var self = this;
-        this.nodeList = [];
-        console.log(e)
-        axios.get(common.url2+"enterpriseTechnologyImport/comName",{
-          params:{
-            comName : e
-          },
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          console.log(res.data);
-           this.technologyLength = res.data.length;
-           this.technologyList = res.data[0].technologys.split(",");
-           for(var technology of self.technologyList){
-             if(technology){
-               self.nodeList.push({"name": technology.name, "type": 3});
-             }else{
-             }
-           }
-        })
+       if(this.type.id == 1){
+          axios.get(common.url1+"findTechnologyByCompany",{
+            params:{
+              company : e
+            },
+            async: false,
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            // var self = this;
+            if(res){
+              // this.technologyList = res.data.data;
+              // if(res.data.data.length !== 0){
+              //   this.technologyList.push(res.data.data);
+              // }
+              this.technologyList = [
+                {name:"人工智能", id:"70"},
+                {name:"芯片", id:"21"}
+              ]  
+              console.log(this.technologyList)
+              for(var technology of this.technologyList){
+                if(technology){
+                  this.treeData.children[1].children.push({"name": technology.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
+            }
+            else{
+              console.log(err);
+            }
+          })
+        } 
+        else if(this.type.id == 2){
+          axios.get(common.url1+"findComByTech",{
+            params:{
+              technologyName : e
+            },
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            if(res){
+              // this.technologyList = res.data.data;
+              console.log(111111111111)
+              console.log(res.data.data.length);
+              this.technologyList = [
+                {name:"人工智能", id:"70"},
+                {name:"芯片", id:"21"}
+              ]  
+              this.nodeList = [];
+              if(res.data.data.length !== 0){
+                this.technologyList.push(res.data.data);
+              }
+              console.log(this.technologyList)
+              for(var technology of this.technologyList){
+                if(technology){
+                  this.treeData.children[0].children.push({"name": technology.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
+            }
+            else{
+              console.log(err);
+            }
+          })
+        }else if(this.type.id == 3){
+          axios.get(common.url1+"findCompanyByCompany",{
+            params:{
+              company : e
+            },
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            if(res){
+              //  this.enterpriseList = res.data.data;
+              console.log(111111111111)
+              console.log(res.data.data.length);
+              this.nodeList = [];
+              // this.technologyList = res.data.data;
+              this.technologyList = [
+                {name:"人工智能", id:"70"},
+                {name:"芯片", id:"21"}
+              ]  
+              if(res.data.data.length !== 0){
+                this.technologyList.push(res.data.data);
+              }
+              console.log(this.technologyList)
+              for(var technology of this.technologyList){
+                if(technology){
+                  this.treeData.children[0].children.push({"name": technology.name, "children": []});
+                }
+                this.drawTree(this.treeData);
+              }
+            }
+            else{
+              console.log(err);
+            }
+          })
+        }else{
+          alert("好像除了一些状况！");
+        }
       },
       getTreeData(e) {
         this.treeData.name = this.entity;
@@ -1041,9 +1257,14 @@
       fetchData(){
         // console.log('路由发送变化doing...');
         location.reload();
+      },
+      checkReport(row) {
+        console.log(row);
+        this.show = 4;
       }
     },
     created(){//初始化标签位置
+    
         var self = this;
         let tags = [];
         // this.type = this.$route.query.type;
@@ -1058,8 +1279,9 @@
           this.type.name = "专利";
           this.type.id = 3;
         }
-        console.log(this.type);
-        console.log(this.entity);
+
+        this.getTechnologies(this.entity);
+        this.getCompanies(this.entity);
         // axios.get(common.url2+"enterpriseBaseImport/comName",{
         //   params:{
         //     enterprise: this.$route.query.entity
@@ -1103,13 +1325,17 @@
     },
     mounted(){
       
+        // console.log(this.type);
+        // console.log(this.entity);
+        
       // console.log(this.$route.query.entity);
-      this.getCompanies(this.entity);
-      this.getNews(this.entity);
+      
+      // this.getNews(this.entity);
       // this.getCompanyDetail(this.entity);
       // this.getAbsImport(this.entity);
-      // this.getTechnologies(this.entity);
+      
       this.getTreeData(this.entity);
+      console.log(this.enterpriseList);
       // this.drawRadar();
       // // this.drawBar();
       // this.drawBarLine("bar",["语音识别","信息传输","零售","计算机网络","图像识别"],[120,88,269,210,300]);
@@ -1123,7 +1349,15 @@
       //     this.rotateY(this.speedY);
       // }, 17)
       // console.log(this.treeData);
-      
+      // this.drawRadar('radar2');
+      // this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawPie('pie2',
+      //           ['支持政策','打压政策'],
+      //           [
+      //               {value:335, name:'支持政策'},
+      //               {value:310, name:'打压政策'}
+      //           ]);
     },
     components:{
       adminHeader, Timeline, TimelineItem, TimelineTitle
@@ -1131,7 +1365,7 @@
   }
 </script>
 
-<style>
+<style scoped lang="less">
   a {
     text-decoration: none;
     color: #999999;
@@ -1305,5 +1539,36 @@
   }
   .cell {
     text-align: center;
+  }
+  .blank {
+    width: 95%;
+    margin: 10px auto;
+    height: 100%;
+    overflow-y: scroll;
+    border-radius: 15px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+    .report{
+      h1 {
+        text-align: center;
+      }
+      .wrapper-sub, #pie2{
+        float: left;
+        text-align: center;
+        margin-bottom: 20px;
+        .report-chart {
+          width: 520px;
+          height: 400px;
+          border: 1px solid #eee;
+          margin-bottom: 10px;
+          position: relative;
+          text-align: center;
+        }
+      }
+      .wrapper-sub:nth-child(even) {
+          float: right;
+        }
+    }
   }
 </style>

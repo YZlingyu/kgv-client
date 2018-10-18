@@ -17,7 +17,7 @@
           <el-input v-model=username placeholder="请输入用户名" class="login-input"></el-input><br>
           <span class="login-label">密码</span>
           <el-input v-model=password placeholder="请输入密码" class="login-input" type="password"></el-input><br/>
-          <el-button type="primary" class="login-btn">登录</el-button>
+          <el-button type="primary" class="login-btn" @click="login(username, password)">登录</el-button>
           <el-button class="login-btn">取消</el-button>
         </div>
       </el-row>
@@ -29,6 +29,7 @@
 <script>
   import adminHeader from "../../components/adminHeader.vue"
   import axios from 'axios'
+  import * as common from '../../common/common.js'
   export default {
     data() {
       return {
@@ -37,10 +38,30 @@
       }
     },
     methods: {
-     
+      login(username, password){
+        axios.get(common.url3+"getUser",{
+          params:{
+              userName: username,
+              password: password
+            },
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          console.log(res);
+          sessionStorage.sessionId = res.data.data;
+          console.log(sessionStorage);
+          if(res.status == 200){
+            this.$router.push({path: "../data/createKnowledgeGraph"}) 
+          }else{
+            alert("用户名或密码输入错误！");
+          }
+        })
+      }
     },
     mounted(){
-      
+        console.log(common)
     },
     computed: {
      

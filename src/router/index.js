@@ -7,6 +7,7 @@ import reportShow from '@/pages/normal/reportShow'
 import createReport from '@/pages/report/createReport'
 import createReportGraph from '@/pages/report/createReportGraph'
 import reportManagement from '@/pages/report/reportManagement'
+import reportDetail from '@/pages/report/reportDetail'
 import createKnowledgeGraph from '@/pages/data/createKnowledgeGraph'
 import editKnowledgeGraph from '@/pages/data/editKnowledgeGraph'
 import login from '@/pages/admin/login'
@@ -54,6 +55,11 @@ export default new Router({
       path: '/report/reportManagement',
       name: 'report/reportManagement',
       component: reportManagement
+    },
+    {
+      path: '/report/reportDetail',
+      name: 'report/reportDetail',
+      component: reportDetail
     },
     {
       path: '/data/editKnowledgeGraph',
