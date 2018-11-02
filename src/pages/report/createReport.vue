@@ -57,42 +57,31 @@
         
       </el-row> -->
       <el-row class="blank" v-show="show === 1">
-        <h1>请选择行业，生成报告</h1>
-        <el-select v-model="industryValue" placeholder="请选择">
-          <el-option
-            v-for="item in industries"
-            :key="item.value"
-            :label="item.value"
-            :value="item.label">
-          </el-option>
-        </el-select>
+        <h1>报告领域：人工智能</h1>
+        <!-- <el-input v-model="industryValue" placeholder="人工智能" :disabled="true"></el-input> -->
         <div class="report-graph" id="">
           <h1>请输入报告名称</h1>
           <el-input v-model="reportName" placeholder="请输入内容"></el-input>
           <h1>请选择报告所需图表</h1>
           <el-row style="text-align: center;">
-            <el-checkbox-group v-model="checkList">
+            <!-- <el-checkbox-group v-model="checkList" v-for="(item, index) in graphList" :key="item.id">
               <div class="wrapper">
-                <div class="chart" data-index="1" id="bar"></div>
-                <el-checkbox label="柱状图"></el-checkbox>
+                <div class="chart" data-index="index"></div>
+                <el-checkbox :label="index+1"></el-checkbox>
               </div>
+            </el-checkbox-group> -->
+            <div  v-for="(item, index) in graphList" :key="item.id">
               <div class="wrapper">
-                <div class="chart" id="radar" data-index="1"></div>
-                <el-checkbox label="雷达图"></el-checkbox>
+                <div class="chart" data-index="index"></div>
+                  <input type="checkbox" :value="index+1" v-model="checkList" @change="selectChange">
+                  <el-tooltip class="item" effect="dark" :content="item.chartInfo" placement="bottom">
+                    <label for="" style="width: 90%;display: block;overflow-x: scroll;">{{item.chartInfo}}</label>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" :content="item.note" placement="bottom">
+                    <p>{{item.note}}</p>
+                  </el-tooltip>
               </div>
-              <div class="wrapper">
-                <div class="chart" id="barLine" data-index="1"></div>
-                <el-checkbox label="柱线图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="pie" data-index="1"></div>
-                <el-checkbox label="饼状图"></el-checkbox>
-              </div>
-              <div class="wrapper">
-                <div class="chart" id="stack" data-index="1"></div>
-                <el-checkbox label="堆积图"></el-checkbox>
-              </div>
-            </el-checkbox-group>
+            </div>
           </el-row>
           <el-row>
             <el-button class="btn-save" type="primary" round @click="changeBlank">提交</el-button>
@@ -100,9 +89,15 @@
 
         </div>
       </el-row>
-      <el-row class="blank" v-show="show === 2">
+      <!-- <el-row class="blank" v-show="show === 2">
         <div class="report">
           <h1>人工智能2018年工业报告v1.0</h1>
+          <div class="wrapper2">
+            <div class="wrapper-sub" v-for="(item, index) in graphList2" :key="item.id">
+              <div class="report-chart"></div>
+              <h6>sdc</h6>
+            </div>
+          </div>
           <el-row class="clearfloat">
             <div class="wrapper-sub">
               <div class="report-chart" id="bar2"></div>
@@ -122,7 +117,7 @@
             </div>
           </el-row>
         </div>
-      </el-row>
+      </el-row> -->
     </el-main>
   </el-container>
 </el-container>
@@ -132,16 +127,22 @@
   import adminHeader from "../../components/adminHeader.vue"
   import axios from 'axios'
   import $ from 'jquery';
+  import echarts from 'echarts';
   import * as common from '../../common/common.js'
+  let qs = require("qs");
   export default {
     data() {
       return {
         show: 1,
         activeName: 'first',
         industries: [],
-        industryValue: '',
+        industryValue: '人工智能',
         reportName: '',
-        checkList: []
+        checkList: [],
+        graphList: [],
+        myChart: {},
+        graphList2: [],
+        myOutputChart: {}
       }
     },
     computed:{
@@ -156,7 +157,67 @@
         console.log(key, keyPath);
       },
       changeBlank() {
-        this.show = 2;
+        var that = this;
+        // console.log(this.checkList);
+        // console.log(this.graphList);
+        var layouts=[];
+        var names=[];
+        var notes=[];
+
+        for(var i=0; i<this.checkList.length; i++){
+          layouts.push(this.graphList[this.checkList[i]-1].layout);
+          names.push(this.graphList[this.checkList[i]-1].chartInfo);
+          notes.push(this.graphList[this.checkList[i]-1].note);
+        }
+        // console.log(layouts, names, notes);
+        
+        var datatosend = qs.stringify({
+              reportId: 1,
+              tech: '人工智能',
+              reportName: this.reportName,
+              layouts: JSON.stringify(layouts),
+              chartName: JSON.stringify(names),
+              chartNote: JSON.stringify(notes)
+            })
+        axios
+          .post(common.url2+"saveReport", datatosend)
+          .then(function(response) {
+            axios.get(common.url2+"getAllReport",{
+              datatype:'jsonp',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              }
+            }).then((res, err) => {
+              if(res){
+                var res = res.data.data;
+                // console.log(res);
+                that.$router.push({path: "./reportDetail?id="+(res.length-1)})
+              }
+              else{
+                console.log(err);
+              }
+            })
+            // that.show = 2;
+            // for(var index of that.checkList){
+            //   that.graphList2.push(that.graphList[index]);
+            //   // console.log(that.graphList2[j].layout);
+            //   // console.log(document.getElementsByClassName('report-chart').length)
+            //   // that.myOutputChart[j] = echarts.init(document.getElementsByClassName('report-chart')[j]);
+            //   // that.myOutputChart[j].setOption(JSON.parse(that.graphList2[j].layout));
+            // }
+            // for(var j=0; j<that.graphList2.length; j++){
+            //   console.log(that.graphList2[j].layout);
+            //   console.log(document.getElementsByClassName('report-chart').length)
+            //   this.$nextTick(function () {
+            //     that.myOutputChart[j] = echarts.init(document.getElementsByClassName('report-chart')[j]);
+            //   })
+            //   that.myOutputChart[j].setOption(JSON.parse(that.graphList2[j].layout));
+            // }
+          })
+          .catch(function(error) {
+            console.log(error);
+            alert("error!");
+          });
       },
       drawRadar(id, indicator, data){
         var echarts = require('echarts/lib/echarts');
@@ -469,24 +530,50 @@
             console.log(err);
           }
         })
+      },
+      _init(){
+        window.addEventListener('resize', function() {
+              this.myChart.resize();
+            }.bind(this))
+            // this.$emit('optionConfig',this.option);
+      },
+      selectChange(val){
+        console.log(this.checkList);
       }
     },
     created(){//初始化标签位置
-      axios.get(common.url2+"getTechnologyList",{
+      // axios.get(common.url2+"getTechnologyList",{
+      //     datatype:'jsonp',
+      //     headers: {
+      //       'Content-Type': 'application/x-www-form-urlencoded',
+      //     }
+      //   }).then((res, err) => {
+      //     console.log(res.data.data)
+      //     if(res){
+      //       for(var i=0;i<res.data.data.length; i++){
+      //         this.industries.push({
+      //           value: res.data.data[i].name,
+      //           label: res.data.data[i].id
+      //         })
+      //       }
+      //       console.log(this.industries)
+      //     }
+      //     else{
+      //       console.log(err);
+      //     }
+      //   })
+
+        axios.get(common.url2+"getChartByTech/人工智能",{
           datatype:'jsonp',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         }).then((res, err) => {
-          console.log(res.data.data)
+          // console.log(res.data.data)
           if(res){
-            for(var i=0;i<res.data.data.length; i++){
-              this.industries.push({
-                value: res.data.data[i].name,
-                label: res.data.data[i].id
-              })
-            }
-            console.log(this.industries)
+            // console.log(res.data.data);
+            this.graphList = res.data.data;
+            console.log(res)
           }
           else{
             console.log(err);
@@ -495,25 +582,34 @@
     },
     mounted(){
       this.entity = this.$route.query.entity;
-      this.drawRadar('radar');
-      this.drawBar('bar',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawBarLine("barLine", ['星期一','星期二','星期三','星期四'], [10,3,24,15]);
-      this.drawPie('pie',
-                ['支持政策','打压政策'],
-                [
-                    {value:335, name:'支持政策'},
-                    {value:310, name:'打压政策'}
-                ]);
-      this.drawStack('stack');
-      this.drawRadar('radar2');
-      this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawPie('pie2',
-                ['支持政策','打压政策'],
-                [
-                    {value:335, name:'支持政策'},
-                    {value:310, name:'打压政策'}
-                ]);
+      // this.drawRadar('radar');
+      // this.drawBar('bar',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawBarLine("barLine", ['星期一','星期二','星期三','星期四'], [10,3,24,15]);
+      // this.drawPie('pie',
+      //           ['支持政策','打压政策'],
+      //           [
+      //               {value:335, name:'支持政策'},
+      //               {value:310, name:'打压政策'}
+      //           ]);
+      // this.drawStack('stack');
+      // this.drawRadar('radar2');
+      // this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawPie('pie2',
+      //           ['支持政策','打压政策'],
+      //           [
+      //               {value:335, name:'支持政策'},
+      //               {value:310, name:'打压政策'}
+      //           ]);
+    },
+    updated(){
+      this.$nextTick(function () {
+      })
+
+      for(var i=0; i<this.graphList.length; i++){
+          this.myChart[i] = echarts.init(document.getElementsByClassName('chart')[i]);
+          this.myChart[i].setOption(JSON.parse(this.graphList[i].layout));
+        }
     },
     components:{
       adminHeader
@@ -574,43 +670,63 @@
          float: left;
          text-align: center;
          margin-bottom: 20px;
+         max-width: 30%;
          h1{
            text-align: center;
          }
          .chart, #pie {
-          width: 332px;
-          height: 250px;
-          border: 1px solid #eee;
-          margin-right: 30px;
-          margin-bottom: 10px;
-          position: relative;
-          text-align: center;
-          .unchecked {
-            display: none;
+            width: 332px;
+            height: 250px;
+            border: 1px solid #eee;
+            margin-right: 30px;
+            margin-bottom: 10px;
+            position: relative;
+            text-align: center;
+            .unchecked {
+              display: none;
+            }
           }
-        }
+          p, label {
+            width: 90%;
+            overflow: hidden;/*超出部分隐藏*/
+            white-space: nowrap;/*不换行*/
+            text-overflow:ellipsis;/*超出部分文字以...显示*/
+          }
+          label {
+            color: #545c64;
+          }
+          p {
+            color: #999999;
+          }
+          .el-checkbox {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
        }
        
        .report{
          h1 {
            text-align: center;
          }
-         .wrapper-sub, #pie2{
-           float: left;
-           text-align: center;
-           margin-bottom: 20px;
-           .report-chart {
-             width: 520px;
-             height: 400px;
-             border: 1px solid #eee;
-             margin-bottom: 10px;
-             position: relative;
-             text-align: center;
-           }
-         }
-         .wrapper-sub:nth-child(even) {
-             float: right;
-           }
+         .wrapper2{
+            display: flex;
+            flex-wrap: wrap;
+            .wrapper-sub, #pie2{
+              text-align: center;
+              margin-bottom: 20px;
+              margin-right: 30px;
+              .report-chart {
+                width: 500px;
+                height: 400px;
+                border: 1px solid #eee;
+                margin-bottom: 10px;
+                position: relative;
+                text-align: center;
+              }
+            }
+          }
        }
      }
      .btn-save{

@@ -40,7 +40,7 @@
         <el-breadcrumb-item>{{type.name}}</el-breadcrumb-item>
         <el-breadcrumb-item>{{entity}}</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-row v-show="show === 1">
+      <el-row v-show="show === 1" class="container">
         <el-col :span="16">
           <div class="card">
             <h1 class="title">{{type.name}}关系图谱</h1>
@@ -51,80 +51,107 @@
           <div class="card basic-info">
             <h1 class="title">{{type.name}}信息</h1>
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" class="tab-left">
-          <el-tab-pane label="相关实体   " name="first">
-            <div class="company">
-              <div class="company-link">
-                <i class="el-icon-document"></i>
-                <span class="title-output">链接机构</span><span class="title-output">{{enterpriseList.length}}</span><span class="title-output">所</span>
-                <div class="output-list" v-for="(item, index) in enterpriseList" :key="item.id">
-                  <router-link :to="{path: './company', query:{entity:item}}">
-                    <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item.name}}</span>
-                    <span class="tag" v-if="item.no">{{item.no}}</span>
-                  </router-link>
-                </div>
-              </div>
-              <div class="company-link">
-                <i class="el-icon-document"></i>
-                <span class="title-output">链接技术</span><span class="title-output">{{technologyList.length}}</span><span class="title-output">个</span>
-                <div class="output-list" v-for="(item, index) in technologyList" :key="item.id">
-                  <router-link :to="{path: './technology', query:{entity:item}}">
-                    <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item.name}}</span>
-                  </router-link>
-                </div>
-              </div>
-              <div class="company-link">
-                <i class="el-icon-document"></i>
-                <span class="title-output">链接专利</span><span class="title-output">{{technologyList.length}}</span><span class="title-output">个</span>
-                <div class="output-list" v-for="(item, index) in technologyList" :key="item.id">
-                  <router-link :to="{path: './technology', query:{entity:item}}">
-                    <div class="order">{{ index+1 }}</div>
-                    <span class="output-word">{{item.name}}</span>
-                  </router-link>
-                </div>
-              </div>
+              <el-tab-pane label="相关实体" name="first">
+                <div class="company">
+                  <div class="company-link">
+                    <i class="el-icon-document"></i>
+                    <span class="title-output">链接机构</span><span class="title-output">{{enterpriseList.length}}</span><span class="title-output">所</span>
+                    <div class="output-list" v-for="(item, index) in enterpriseList" :key="item.id">
+                      <router-link :to="{path: './entityInfo?type=company', query:{entity:item}}">
+                        <div class="order">{{ index+1 }}</div>
+                        <span class="output-word">{{item}}</span>
+                        <span class="tag" v-if="item.no">{{item.no}}</span>
+                      </router-link>
+                    </div>
+                  </div>
+                  <div class="company-link">
+                    <i class="el-icon-document"></i>
+                    <span class="title-output">链接技术</span><span class="title-output">{{enterpriseDetail.domain.length}}</span><span class="title-output">个</span>
+                    <div class="output-list" v-for="(item, index) in enterpriseDetail.domain" :key="item.id">
+                      <router-link :to="{path: './entityInfo?type=technology', query:{entity:item}}">
+                        <div class="order">{{ index+1 }}</div>
+                        <span class="output-word">{{item}}</span>
+                      </router-link>
+                    </div>
+                  </div>
+                  <div class="company-link">
+                    <i class="el-icon-document"></i>
+                    <span class="title-output">链接专利</span><span class="title-output">{{patentList.length}}</span><span class="title-output">个</span>
+                    <div class="output-list" v-for="(item, index) in patentList" :key="item.id">
+                      <router-link :to="{path: './entityInfo?type=patent', query:{entity:item}}">
+                        <div class="order">{{ index+1 }}</div>
+                        <span class="output-word">{{item}}</span>
+                      </router-link>
+                    </div>
+                  </div>
 
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="基本信息" name="second">
-            <el-row>
-              <el-col :span="7">
-                <img src="../../assets/404.png" class="person">
-              </el-col>
-              <el-col :span="17">
-                <span class="title-output">{{entity}}</span><br/>
-                <span v-for="label in enterpriseRange" :key="label.index">{{label}}&nbsp;&nbsp;</span><br/>
-                <span v-if="enterpriseDetail">{{enterpriseDetail.address}}</span><br/>
-                <span v-if="enterpriseDetail">{{enterpriseDetail.website}}</span><br/>
-              </el-col>
-            </el-row>
-            <p class="output-detail">北京蓦然认知科技有限公司简称“蓦然认知”，成立于2016年5月5号，总部位于北京市海淀区清华科技园。蓦然认知是一家专注于认知计算，自然语言理解技术的初创公司，对外提供人机协作，智能对话整体解决方案，是国内唯一家能够全语音完成复杂任务的决策引擎。</p>
-          </el-tab-pane>
-          <el-tab-pane label="新闻" name="third">
-            <span class="title-output">新闻</span><span class="title-output">{{newsList.length}}</span><span class="title-output">条</span>
-            <timeline>
-              <timeline-item color="dodgerblue" v-for="item in newsList" :key="item.index">
-                <div class="news_title">{{item.title}}</div><br/>
-                <div class="news_time">{{item.time}}</div><br/>
-                <div class="news_detail">{{item.abs}}</div>
-              </timeline-item>
-            </timeline>
-          </el-tab-pane>
-        </el-tabs>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="基本信息" name="second">
+                <el-row>
+                  <el-col :span="7">
+                    <img :src="'../../static/'+logo+'.png'" class="person">
+                  </el-col>
+                  <el-col :span="17">
+                    <span class="title-output" style="line-height: 80px;">{{enterpriseDetail.name}}</span><br/>
+                    <!-- <span v-if="enterpriseDetail">融资公司数：{{enterpriseDetail.financing}}</span><br/>
+                    <span v-if="enterpriseDetail">投资公司数：{{enterpriseDetail.investing}}</span><br/> -->
+                  </el-col>
+                </el-row>
+                <el-row style="margin-top: 20px;">
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">成立时间：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span class="company_detail">{{enterpriseDetail.createTime}}</span><br/>
+                  </el-col>
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">公司地址：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span class="company_detail">{{enterpriseDetail.addr}}</span><br/>
+                  </el-col>
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">所属领域：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span v-for="label in enterpriseDetail.domain" :key="label.index" class="company_detail">{{label}}&nbsp;&nbsp;</span><br/>
+                  </el-col>
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">公司介绍：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span>{{enterpriseDetail.introduction}}</span><br/>
+                  </el-col>
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">投资公司：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span v-for="item in investment" :key="item.id">{{item}}<br/></span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span v-if="enterpriseDetail" class="sub_title company_detail">融资公司：</span>
+                  </el-col>
+                  <el-col :span="18">
+                    <span v-for="item in financing" :key="item.id">{{item}}<br/></span>
+                  </el-col>
+                </el-row>
+              </el-tab-pane>
+              <el-tab-pane label="新闻" name="third">
+                <span class="title-output">新闻</span><span class="title-output">{{newsList.length}}</span><span class="title-output">条</span>
+                <timeline>
+                  <timeline-item color="dodgerblue" v-for="item in newsList" :key="item.index">
+                    <div class="news_title">{{item.title}}</div><br/>
+                    <div class="news_time">{{item.time}}</div><br/>
+                    <div class="news_detail">{{item.abs}}</div>
+                  </timeline-item>
+                </timeline>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </el-col>
       </el-row>
-      <!-- <el-row v-show="show === 2">
-        <div class="draw-canvas" style="float:left;">
-          <h1>企业技术领域贡献</h1>
-          <div id="radar"></div>
-        </div>
-        <div class="draw-canvas" style="float:right;">
-          <h1>企业领域成果输出量</h1>
-          <div id="bar"></div>
-        </div>
-      </el-row> -->
+      
       <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业成果列表</h1>
@@ -154,16 +181,6 @@
             </el-table>
           </div>
         </el-row>
-        <!-- <el-row v-show="show === 2">
-        <div class="draw-canvas" style="float:left;">
-          <h1>企业领域专利输出量</h1>
-          <div id="patentBar"></div>
-        </div>
-        <div class="draw-canvas" style="float:right;">
-          <h1>企业领域论文输出量</h1>
-          <div id="paperBar"></div>
-        </div>
-      </el-row> -->
       <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业专利列表</h1>
@@ -193,75 +210,6 @@
             </el-table>
           </div>
         </el-row>
-        <el-row v-show="show === 2">
-          <div class="draw-canvas-table">
-            <h1>企业论文列表</h1>
-            <el-table
-              :data="paperTableData"
-              style="width: 100%"
-              class="fundTable">
-              <el-table-column
-                prop="index"
-                label="序号"
-                width="180">
-              </el-table-column>
-              <el-table-column
-                prop="date"
-                label="发布日期"
-                width="180">
-              </el-table-column>
-              <el-table-column
-                prop="name"
-                label="成果名称"
-                width="180">
-              </el-table-column>
-              <el-table-column
-                prop="range"
-                label="成果领域">
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-row>
-      <!-- <el-row v-show="show === 3">
-        <el-col :span="16">
-          <div class="news-card1">
-            <h1 class="title">企业领域标签</h1>
-            <div id='app' >
-              <svg :width='width' :height='height' @mousemove='listener($event)'>
-                <a :href="tag.href" v-for='tag in tags' :key="tag.id">
-                  <text :x='tag.x' :y='tag.y' :font-size='20 * (600/(600-tag.z))' :fill-opacity='((400+tag.z)/600)'>{{tag.text}}</text>
-                </a>
-              </svg>
-            </div>
-          </div>
-          <div class="news-card1">
-            <h1 class="title">企业舆情组成对比</h1>
-            <div id="pie"></div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="news-card2">
-            <h1 class="title">企业新闻详情</h1>
-            <div class="newsList" v-for="(item, index) in newsList" :key="item.newsId">
-              <div class="output-list news-list" @mouseover="changeShowNews(item.newsId)" @mouseout="displayNews()">
-                <span class="order">{{index+1}}</span>
-                <span class="output-word">{{item.title}}</span>
-              </div>
-              <div class="pop-out" v-show="showNews === item.newsId">{{item.abs}}</div>
-            </div>
-          </div>
-        </el-col>
-      </el-row> -->
-      <!-- <el-row v-show="show ===2">
-        <div class="draw-canvas" style="float:left;">
-          <h1>企业获投金额</h1>
-          <div id="getFundBar"></div>
-        </div>
-        <div class="draw-canvas" style="float:right;">
-          <h1>企业对外投资金额</h1>
-          <div id="outFundBar"></div>
-        </div>
-      </el-row> -->
       <el-row v-show="show === 2">
           <div class="draw-canvas-table">
             <h1>企业获投公司列表</h1>
@@ -285,7 +233,7 @@
                 width="180">
               </el-table-column>
               <el-table-column
-                prop="range"
+                prop="fundAmount"
                 label="获投金额">
               </el-table-column>
             </el-table>
@@ -385,143 +333,33 @@
   import axios from 'axios'
   import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
   import * as common from '../../common/common.js'
+  // import * as assets from '../../assets'
   export default {
     data() {
       return {
         type: {},
         show: 1,
+        logo: "",
         activeName: 'first',
+        investment: [],
+        financing: [],
+        companyId: "",
         enterpriseList: [],
-        enterpriseDetail: '',
+        enterpriseDetail: {},
         enterpriseRange: '',
         technologyList: [],
         technologyLength: '',
-        newsList: 
-        [{
-          title: "鸿海精密1000万美元收购中国AI初创企业",
-          time: "2018-08-22 08:50",
-          abs: "鸿海精密在台湾证交所公告称，其子公司以1000万美元收购北京蓦然认知科技有限公司的开曼子公司的12%股份，鸿海称此举为长期战略投资。sd"
-        },
-        {
-          title: "专访蓦然认知：AI是实现目的的工具 服务和产品才是未来",
-          time: "2017-10-30 12:12",
-          abs: "整整20年前IBM公司创造的超级计算机深蓝第一次战胜了国际象棋世界冠军卡斯帕罗夫，而今天我们用它的名字来命名这个全新的人工智能报道品牌。"
-        },
-        {
-          title: "【GGAI峰会】云知声、思必驰、蓦然认知齐聚开幕式，挑战智能语音新赛道",
-          time: "2017-10-19",
-          abs: "未来的AI落地产品方向，或者说是人机交互的方式，极可能是语音与视觉交互的深度融合，业界有机会来设计一种完全不一样的用户体验，和完全不同的产品认知。"
-        }],
+        newsList: [],
+        patentList: [],
         entity: '',
         absList: [],
         nodes: [],
         edges: [],
         treeData: {},
-        outputTableData: [{
-            index: 1,
-            date: '2016-05-02',
-            name: '阿里巴巴翻译平台软件',
-            range: '文字识别'
-          }, {
-            index: 2,
-            date: '2016-05-04',
-            name: '阿里巴巴中文站开发质量实时检测系统软件',
-            range: '质量检测'
-          }, {
-            index: 3,
-            date: '2016-05-01',
-            name: '阿里巴巴零售通无忧购服务工具软件',
-            range: '软件工程'
-          }, {
-            index: 4,
-            date: '2016-05-03',
-            name: '阿里巴巴零售通客户关系管理客户端iOS版软件',
-            range: 'IOS'
-          }],
-          patentTableData: [{
-            index: 1,
-            date: '2016-05-02',
-            name: '阿里巴巴翻译平台软件',
-            range: '文字识别'
-          }, {
-            index: 2,
-            date: '2016-05-04',
-            name: '阿里巴巴中文站开发质量实时检测系统软件',
-            range: '质量检测'
-          }, {
-            index: 3,
-            date: '2016-05-01',
-            name: '阿里巴巴零售通无忧购服务工具软件',
-            range: '软件工程'
-          }, {
-            index: 4,
-            date: '2016-05-03',
-            name: '阿里巴巴零售通客户关系管理客户端iOS版软件',
-            range: 'IOS'
-          }],
-          paperTableData: [{
-            index: 1,
-            date: '2016-05-02',
-            name: '阿里巴巴翻译平台软件',
-            range: '文字识别'
-          }, {
-            index: 2,
-            date: '2016-05-04',
-            name: '阿里巴巴中文站开发质量实时检测系统软件',
-            range: '质量检测'
-          }, {
-            index: 3,
-            date: '2016-05-01',
-            name: '阿里巴巴零售通无忧购服务工具软件',
-            range: '软件工程'
-          }, {
-            index: 4,
-            date: '2016-05-03',
-            name: '阿里巴巴零售通客户关系管理客户端iOS版软件',
-            range: 'IOS'
-          }],
-          getFundTableData: [{
-            index: 1,
-            date: '2016-05-02',
-            name: 'IBM',
-            fundAmount: '300'
-          }, {
-            index: 2,
-            date: '2016-05-04',
-            name: '微软',
-            fundAmount: '500'
-          }, {
-            index: 3,
-            date: '2016-05-01',
-            name: '微策略',
-            fundAmount: '500'
-          }, {
-            index: 4,
-            date: '2016-05-03',
-            name: 'Google',
-            fundAmount: '1000'
-          }],
-          outFundTableData: [{
-            index: 1,
-            date: '2016-05-02',
-            name: '百度',
-            fundAmount: '200'
-          }, {
-            index: 2,
-            date: '2016-05-04',
-            name: '京东',
-            fundAmount: '300'
-          }, {
-            index: 3,
-            date: '2016-05-01',
-            name: '今日头条',
-            fundAmount: '300'
-          }, {
-            index: 4,
-            date: '2016-05-03',
-            name: 'keep',
-            fundAmount: '100'
-          }],
+        outputTableData: [],
+        patentTableData: [],
+        getFundTableData: [],
+        outFundTableData: [],
         width:700,
         height:350,
         tagsNum:20,
@@ -530,23 +368,7 @@
         speedY:Math.PI/360,
         tags: [],
         showNews: '',
-        tableData: [{
-          name: '2016-05-03',
-          date: '人工智能2018年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-02',
-          date: '人工智能2017年工业报告v1.1',
-          region: '人工智能'
-        }, {
-          name: '2016-05-04',
-          date: '人工智能2017年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-01',
-          date: '人工智能2016年工业报告v1.0',
-          region: '人工智能'
-        }]
+        tableData: []
       }
     },
     computed:{
@@ -564,150 +386,121 @@
       handleClick(tab, event) {
         // console.log(tab, event);
       },
-      popOut(){
-        this.showPop = !this.showPop;
-      },
-      showRightPop(){
-        this.showRight= !this.showRight;
-      },
       handleOpen(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       },
-      changeShowNews(a){
-        this.showNews = a;
-      },
-      displayNews(){
-        this.showNews = '';
-      },
-      getCompanies(e){
+      getCompanies(){
         if(this.type.id == 1){
-          axios.get(common.url1+"findCompanyByCompany",{
-            params:{
-              company : e
-            },
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
+          for(var enterprise of this.enterpriseList){
+            if(enterprise){
+              this.treeData.children[0].children.push({"name": enterprise, "children": []});
             }
-          }).then((res, err) => {
-            // var self = this;
-            if(res){
-              this.enterpriseList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data);
-              this.nodeList = [];
-              // self.enterpriseLength = res.data.data.length;
-              // if(res.data.data.length !== 0){
-              //   this.enterpriseList.push(res.data.data);
-              // }
-              console.log(this.enterpriseList)
-              for(var enterprise of this.enterpriseList){
-                if(enterprise){
-                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
-                }
-                this.drawTree(this.treeData);
-              }
-            }
-            else{
-              console.log(err);
-            }
-          })
+            this.drawTree(this.treeData);
+          }
         } 
         else if(this.type.id == 2){
-          axios.get(common.url1+"findComByTech",{
-            params:{
-              technologyName : e
-            },
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          }).then((res, err) => {
-            if(res){
-              this.enterpriseList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data.length);
-              this.nodeList = [];
-              self.enterpriseLength = res.data.data.length;
-              // if(res.data.data.length !== 0){
-              //   this.enterpriseList.push(res.data.data);
-              // }
-              console.log(this.enterpriseList)
-              for(var enterprise of this.enterpriseList){
-                if(enterprise){
-                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
-                }
-                this.drawTree(this.treeData);
-              }
-            }
-            else{
-              console.log(err);
-            }
-          })
+          // axios.get(common.url1+"findComByTech",{
+          //   params:{
+          //     technologyName : e
+          //   },
+          //   datatype:'jsonp',
+          //   headers: {
+          //     'Content-Type': 'application/x-www-form-urlencoded',
+          //   }
+          // }).then((res, err) => {
+          //   if(res){
+          //     this.enterpriseList = res.data.data;
+          //     // console.log(111111111111)
+          //     // console.log(res.data.data.length);
+          //     this.nodeList = [];
+          //     self.enterpriseLength = res.data.data.length;
+          //     // if(res.data.data.length !== 0){
+          //     //   this.enterpriseList.push(res.data.data);
+          //     // }
+          //     // console.log(this.enterpriseList)
+          //     for(var enterprise of this.enterpriseList){
+          //       if(enterprise){
+          //         this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
+          //       }
+          //       this.drawTree(this.treeData);
+          //     }
+          //   }
+          //   else{
+          //     console.log(err);
+          //   }
+          // })
         }else if(this.type.id == 3){
-          axios.get(common.url1+"findCompanyByCompany",{
-            params:{
-              company : e
-            },
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          }).then((res, err) => {
-            if(res){
-              //  this.enterpriseList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data.length);
-              this.nodeList = [];
-              self.enterpriseLength = res.data.data.length;
-              // if(res.data.data.length !== 0){
-              //   this.enterpriseList.push(res.data.data);
-              // }
-              console.log(this.enterpriseList)
-              for(var enterprise of this.enterpriseList){
-                if(enterprise){
-                  this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
-                }
-                this.drawTree(this.treeData);
-              }
-            }
-            else{
-              console.log(err);
-            }
-          })
+          // axios.get(common.url1+"findCompanyByCompany",{
+          //   params:{
+          //     company : e
+          //   },
+          //   datatype:'jsonp',
+          //   headers: {
+          //     'Content-Type': 'application/x-www-form-urlencoded',
+          //   }
+          // }).then((res, err) => {
+          //   if(res){
+          //     //  this.enterpriseList = res.data.data;
+          //     // console.log(111111111111)
+          //     // console.log(res.data.data.length);
+          //     this.nodeList = [];
+          //     self.enterpriseLength = res.data.data.length;
+          //     // if(res.data.data.length !== 0){
+          //     //   this.enterpriseList.push(res.data.data);
+          //     // }
+          //     // console.log(this.enterpriseList)
+          //     for(var enterprise of this.enterpriseList){
+          //       if(enterprise){
+          //         this.treeData.children[0].children.push({"name": enterprise.name, "children": []});
+          //       }
+          //       this.drawTree(this.treeData);
+          //     }
+          //   }
+          //   else{
+          //     console.log(err);
+          //   }
+          // })
         }else{
           alert("好像除了一些状况！");
         }
       },
-      getNews(e){
-        if(this.type.id == 1){
-           axios.get(common.url1+"findNewsByCompany",{
-            params:{
-              company : e
-            },
+      getNews(){
+        var self = this;
+        if(self.type.id == 1){
+           axios.get(common.url4+"getCompanyNewsById/2",{
             datatype:'jsonp',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             }
           }).then((res, err) => {
             if(res) {
-              this.newsList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data.length);
-              this.nodeList = [];
-              if(res.data.data.length !== 0){
-                this.newsList.push(res.data.data);
+              // console.log(res.data.data);
+              for(var item of res.data.data){
+                // console.log(item)
+                self.newsList.push({
+                  title: item.title,
+                  time: item.newsTime,
+                  abs: item.newsIntroduction
+                })
               }
-              console.log(this.newsList)
-              for(var news of this.newsList){
-                if(news){
-                  this.treeData.children[2].children.push({"name": news.name, "children": []});
-                }
-                this.drawTree(this.treeData);
-              }
+              // console.log(self.newsList);
+              // this.newsList = res.data.data;
+              // // console.log(111111111111)
+              // // console.log(res.data.data.length);
+              // this.nodeList = [];
+              // if(res.data.data.length !== 0){
+              //   this.newsList.push(res.data.data);
+              // }
+              // // console.log(this.newsList)
+              // for(var news of this.newsList){
+              //   if(news){
+              //     this.treeData.children[2].children.push({"name": news.name, "children": []});
+              //   }
+              //   this.drawTree(this.treeData);
+              // }
             }
             else {
               console.log(err);
@@ -717,21 +510,97 @@
        
       },
       getCompanyDetail(e){
-        axios.get(common.url2+"enterpriseBaseImport/comName",{
-          params:{
-            enterprise: e
-          },
-          datatype:'jsonp',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then((res, err) => {
-          console.log("@@@@@@@@@@@companydetail")
-          if(res.data[0]){
-            this.enterpriseDetail = res.data[0];
-            this.enterpriseRange = res.data[0].opeRange.split("，");
-          }
-        })
+        var self = this;
+        axios.get(common.url4+"getCompanyInfoByName/"+e,{
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            if(res){
+              var res = res.data.data;
+              // console.log(res);
+              // self.companyId = res.id;
+              self.enterpriseDetail.name = res.companyName;
+              self.enterpriseDetail.addr = res.companyAdd;
+              self.enterpriseDetail.createTime = res.companyCreateDate;
+              self.enterpriseDetail.domain = res.companyDomain.split(",");
+              self.enterpriseDetail.introduction = res.companyIntroduction;
+              var investment = res.investmentId.split(',');
+              var financing = res.financingId.split(',');
+              // for(var item of investment){
+              if(investment){
+                for(var i=0; i<investment.length; i++){
+                  axios.get(common.url4+"getCompanyInfoById/"+investment[i],{
+                    datatype:'jsonp',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                  }).then((res, err) => {
+                    if(res){
+                      var fundAmount = Math.floor(Math.random()*1000);
+                      if(res.data.data){
+                        self.investment.push(res.data.data.companyName);
+                        self.enterpriseList.push(res.data.data.companyName);
+                        self.outFundTableData.push({
+                          index: i+1,
+                          date: res.data.data.companyCreateDate,
+                          name: res.data.data.companyName,
+                          fundAmount: fundAmount
+                        })
+                      }else{
+                        self.investment.push("无投资");
+                      }
+                      // console.log(res.data.data.companyName);
+                    }else{
+                      console.log(err);
+                    }
+                  })
+                }
+              }else{
+                self.investment.push("无投资");
+              }
+              
+              if(financing){
+                // for(var item of financing){
+                for(var j=0; j<financing.length; j++){
+                  axios.get(common.url4+"getCompanyInfoById/"+financing[j],{
+                    datatype:'jsonp',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                  }).then((res, err) => {
+                    if(res){
+                      if(res.data.data){
+                        var fundAmount = Math.floor(Math.random()*1000);
+                        self.financing.push(res.data.data.companyName);
+                        self.enterpriseList.push(res.data.data.companyName);
+                        self.getFundTableData.push({
+                          index: i+1,
+                          date: res.data.data.companyCreateDate,
+                          name: res.data.data.companyName,
+                          fundAmount: fundAmount
+                        })
+                      }else {
+                        self.financing.push("未融资");
+                      }
+                      // console.log(res.data.data.companyName);
+                    }else{
+                      console.log(err);
+                    }
+                  })
+                }
+              }else {
+                self.financing.push("未融资");
+              }
+              
+              
+              // self.enterpriseList = res.
+              // for(var item in )
+            }else{
+              console.log(err);
+            }
+          })
       },
       getAbsImport(e){
         axios.get(common.url2+"absImport/toName",{
@@ -745,282 +614,174 @@
         }).then((res, err) => {
           if(res.data[0]){
             this.absList = res.data;
-            console.log(this.absList)
+            // console.log(this.absList)
           }
             console.log(err);
         })
       },
-      // getEnterprises(e){
-      //   var self = this;
-      //   axios.get(common.url2+"absImport/toName",{
-      //     params:{
-      //       name : e
-      //     },
-      //     datatype:'jsonp',
-      //     async: true,
-      //     headers: {
-      //       'Content-Type': 'application/x-www-form-urlencoded',
-      //     }
-      //   }).then((res, err) => {
-      //     console.log("@@@@@@@@@@@@@@@@@@@enterprise")
-      //     console.log(res.data)
-      //     this.nodeList = [];
-      //      self.enterpriseLength = res.data.length;
-      //      this.enterpriseList.concat(res.data);
-      //      for(var enterprise of this.enterpriseList){
-      //        if(enterprise){
-      //          this.treeData.push({"name": enterprise.name, "children": []});
-      //        }
-      //        this.drawTree(data);
-      //      }
-      //   })
-      // },
-      getTechnologies(e){
-       if(this.type.id == 1){
-          axios.get(common.url1+"findTechnologyByCompany",{
-            params:{
-              company : e
-            },
-            async: false,
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          }).then((res, err) => {
-            // var self = this;
-            if(res){
-              // this.technologyList = res.data.data;
-              // if(res.data.data.length !== 0){
-              //   this.technologyList.push(res.data.data);
-              // }
-              this.technologyList = [
-                {name:"人工智能", id:"70"},
-                {name:"芯片", id:"21"}
-              ]  
-              console.log(this.technologyList)
-              for(var technology of this.technologyList){
-                if(technology){
-                  this.treeData.children[1].children.push({"name": technology.name, "children": []});
-                }
-                this.drawTree(this.treeData);
-              }
-            }
-            else{
-              console.log(err);
-            }
-          })
-        } 
-        else if(this.type.id == 2){
-          axios.get(common.url1+"findComByTech",{
-            params:{
-              technologyName : e
-            },
+      getPatent() {
+        var self = this;
+        axios.get(common.url4+"getCompanyPatentById/2",{
             datatype:'jsonp',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             }
           }).then((res, err) => {
             if(res){
-              // this.technologyList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data.length);
-              this.technologyList = [
-                {name:"人工智能", id:"70"},
-                {name:"芯片", id:"21"}
-              ]  
-              this.nodeList = [];
-              if(res.data.data.length !== 0){
-                this.technologyList.push(res.data.data);
+              // console.log(res);
+              for(var item of res.data.data){
+                self.patentList.push(item.patentName);
               }
-              console.log(this.technologyList)
-              for(var technology of this.technologyList){
-                if(technology){
-                  this.treeData.children[0].children.push({"name": technology.name, "children": []});
-                }
-                this.drawTree(this.treeData);
+              for(var i=0; i<res.data.data.length; i++){
+                self.patentTableData.push({
+                  index: i+1,
+                  date: res.data.data[i].publishTime,
+                  name: res.data.data[i].patentName,
+                  range: res.data.data[i].patentDomain
+                })
               }
             }
             else{
               console.log(err);
             }
           })
-        }else if(this.type.id == 3){
-          axios.get(common.url1+"findCompanyByCompany",{
-            params:{
-              company : e
-            },
+      },
+      getOutput(){
+        var self = this;
+        axios.get(common.url4+"getEnterpriseAchievementsById/2",{
             datatype:'jsonp',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             }
           }).then((res, err) => {
             if(res){
-              //  this.enterpriseList = res.data.data;
-              console.log(111111111111)
-              console.log(res.data.data.length);
-              this.nodeList = [];
-              // this.technologyList = res.data.data;
-              this.technologyList = [
-                {name:"人工智能", id:"70"},
-                {name:"芯片", id:"21"}
-              ]  
-              if(res.data.data.length !== 0){
-                this.technologyList.push(res.data.data);
-              }
-              console.log(this.technologyList)
-              for(var technology of this.technologyList){
-                if(technology){
-                  this.treeData.children[0].children.push({"name": technology.name, "children": []});
-                }
-                this.drawTree(this.treeData);
+              // console.log(res);
+              for(var i=0; i<res.data.data.length; i++){
+                self.outputTableData.push({
+                  index: i+1,
+                  date: res.data.data[i].publishTime,
+                  name: res.data.data[i].achievementsName,
+                  range: res.data.data[i].achievementsDomain
+                })
               }
             }
             else{
               console.log(err);
             }
           })
-        }else{
-          alert("好像除了一些状况！");
-        }
+      },
+      getReport(){
+        var self = this;
+        axios.get(common.url2+"getReportByTechnology/人工智能",{
+            datatype:'jsonp',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            }
+          }).then((res, err) => {
+            if(res){
+              console.log(res);
+              for(var item of res.data.data){
+                self.tableData.push({
+                  name: item.reportName,
+                  date: item.createTime,
+                  region: item.tech
+                });
+
+              }
+            }
+            else{
+              console.log(err);
+            }
+          })
       },
       getTreeData(e) {
-        this.treeData.name = this.entity;
+        this.treeData.name = e;
         this.treeData.children = [];
         this.treeData.children.push({"name": "企业", "children": []});
         this.treeData.children.push({"name": "技术", "children":[]});
         this.treeData.children.push({"name": "新闻", "children":[]});
-
+        // this.drawTree(this.treeData);
         if( this.type.id ==1 ){
-          axios.get(common.url1+"findCompanyByCompany",{
-            params:{
-              company : e
-            },
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
+          // console.log(this.enterpriseList)
+          for(var enterprise of this.enterpriseList){
+            if(enterprise){
+              this.treeData.children[0].children.push({"name": enterprise, "children": []});
             }
-          }).then((res, err) => {
-            
-            if(res){
-              // console.log(res.data)
-              if(res.data.code == 200){
-                for(var item of res.data.data) {
-                  this.treeData.children[0].children.push({"name": item.name, "children": []});
-                }
-              }
-              axios.get(common.url1+"findCompanyByTechnology",{
-                params:{
-                  technology : e
-                },
-                datatype:'jsonp',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                }
-              }).then((res, err) => {
-                
-                this.technologyLength = res.data.data.length;
-                console.log(res.data.data)
-                this.technologyList = res.data.data;
-                // console.log(this.technologyList);
-                if(res.data.code == 200){
-                  for(var technology of this.technologyList){
-                    if(technology){
-                      this.treeData.children[1].children.push({"name": technology, "children":[]});
-                    }else{
-                    }
-                  }
-                }
-                axios.get(common.url1+"findNewsByCompany",{
-                  params:{
-                    company: e
-                  },
-                  datatype:'jsonp',
-                  async: true,
-                  headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                  }
-                }).then((res, err) => {
-                  console.log(res.data)
-                  if(res.data.code ==200){
-                    for(var item of res.data.data) {
-                      this.treeData.children[2].children.push({"name": item.title, "children": []});
-                    }
-                  }
-                console.log(this.treeData);
-                this.drawTree(this.treeData);
-                })
-              })
-            }
-            else{
-              console.log(err);
-            }
-          })
+          }
+          for(var item of this.enterpriseDetail.domain){
+            this.treeData.children[1].children.push({"name": item, "children": []});
+          }
+          for(var item of this.newsList){
+            this.treeData.children[2].children.push({"name": item.title, "children": []});
+          }
+          this.drawTree(this.treeData);
         }else if(this.type.id == 2){
-          axios.get(common.url1+"findComByTech",{
-            params:{
-              technologyName : e
-            },
-            datatype:'jsonp',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          }).then((res, err) => {
+          // axios.get(common.url1+"findComByTech",{
+          //   params:{
+          //     technologyName : e
+          //   },
+          //   datatype:'jsonp',
+          //   headers: {
+          //     'Content-Type': 'application/x-www-form-urlencoded',
+          //   }
+          // }).then((res, err) => {
             
-            if(res){
-              console.log(res.data)
-              if(res.data.code == 200){
-                for(var item of res.data.data) {
-                  this.treeData.children[0].children.push({"name": item, "children": []});
-                }
-              }
-              axios.get(common.url1+"findTechnologyChildrens",{
-                params:{
-                  technology : e
-                },
-                datatype:'jsonp',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                }
-              }).then((res, err) => {
+          //   if(res){
+          //     // console.log(res.data)
+          //     if(res.data.code == 200){
+          //       for(var item of res.data.data) {
+          //         this.treeData.children[0].children.push({"name": item, "children": []});
+          //       }
+          //     }
+          //     axios.get(common.url1+"findTechnologyChildrens",{
+          //       params:{
+          //         technology : e
+          //       },
+          //       datatype:'jsonp',
+          //       headers: {
+          //         'Content-Type': 'application/x-www-form-urlencoded',
+          //       }
+          //     }).then((res, err) => {
                 
-                this.technologyLength = res.data.data.length;
-                console.log(res.data.data)
-                this.technologyList = res.data.data;
-                // console.log(this.technologyList);
-                if(res.data.code == 200){
-                  for(var technology of this.technologyList){
-                    if(technology){
-                      this.treeData.children[1].children.push({"name": technology, "children":[]});
-                    }else{
-                    }
-                  }
-                }
-                axios.get(common.url1+"findNewsByTechnology",{
-                  params:{
-                    technologyName: e
-                  },
-                  datatype:'jsonp',
-                  async: true,
-                  headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                  }
-                }).then((res, err) => {
-                  console.log(res.data)
-                  if(res.data.code == 200){
-                    for(var item of res.data.data) {
-                      this.treeData.children[2].children.push({"name": item.title, "children": []});
-                    }
-                  }
-                console.log(this.treeData);
-                this.drawTree(this.treeData);
-                })
-              })
-            }
-            else{
-              console.log(err);
-            }
-          })
+          //       this.technologyLength = res.data.data.length;
+          //       // console.log(res.data.data)
+          //       this.technologyList = res.data.data;
+          //       // console.log(this.technologyList);
+          //       if(res.data.code == 200){
+          //         for(var technology of this.technologyList){
+          //           if(technology){
+          //             this.treeData.children[1].children.push({"name": technology, "children":[]});
+          //           }else{
+          //           }
+          //         }
+          //       }
+          //       axios.get(common.url1+"findNewsByTechnology",{
+          //         params:{
+          //           technologyName: e
+          //         },
+          //         datatype:'jsonp',
+          //         async: true,
+          //         headers: {
+          //           'Content-Type': 'application/x-www-form-urlencoded',
+          //         }
+          //       }).then((res, err) => {
+          //         // console.log(res.data)
+          //         if(res.data.code == 200){
+          //           for(var item of res.data.data) {
+          //             this.treeData.children[2].children.push({"name": item.title, "children": []});
+          //           }
+          //         }
+          //       // console.log(this.treeData);
+          //       this.drawTree(this.treeData);
+          //       })
+          //     })
+          //   }
+          //   else{
+          //     console.log(err);
+          //   }
+          // })
         }else if(this.type.id == 3){}
+        this.drawTree(this.treeData);
       },
       drawTree(data){
         var echarts = require('echarts/lib/echarts');
@@ -1054,212 +815,12 @@
           }
           myChart.setOption(option);
       },
-      drawRadar(){
-        var echarts = require('echarts/lib/echarts');
-        var radarChart = echarts.init(document.getElementById('radar'));
-        var option = {
-              radar: {
-                  // shape: 'circle',
-                  name: {
-                      textStyle: {
-                          color: '#fff',
-                          backgroundColor: '#999',
-                          borderRadius: 3,
-                          padding: [3, 5]
-                    }
-                  },
-                  indicator: [
-                    { name: '社交智能', max: 100},
-                    { name: '知识表示', max: 100},
-                    { name: '随机优化', max: 100},
-                    { name: '遗传算法', max: 100},
-                    { name: '计算机性能分析', max: 100},
-                    { name: '吞吐量', max: 100}
-                  ]
-              },
-              series: [{
-                  type: 'radar',
-                  // areaStyle: {normal: {}},
-                  data : [
-                      {
-                          value : [40, 55, 33, 17, 5, 8],
-                          name : '企业'
-                      }
-                  ]
-              }]
-          };
-
-        radarChart.setOption(option);
-      },
-      drawBar(){
-        var echarts = require('echarts/lib/echarts');
-        var barChart = echarts.init(document.getElementById('bar'));
-        var option = {
-            color: ['#3398DB'],
-            tooltip : {
-                trigger: 'axis',
-                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '20%',
-                containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    data : ['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],
-                    axisTick: {
-                        alignWithLabel: true
-                    }
-                }
-            ],
-            yAxis : [
-                {
-                    type : 'value'
-                }
-            ],
-            series : [
-                {
-                    type:'bar',
-                    barWidth: '60%',
-                    data:[10, 24, 8, 2, 0, 16]
-                }
-            ]
-        };
-        barChart.setOption(option);
-      },
-      drawBarLine(id, xData, yData) {
-        var that = this;
-        // alert(xData, yData);
-        var echarts = require('echarts/lib/echarts');
-        var myChart = echarts.init(document.getElementById(id));
-        var option = {
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross',
-                    label: {
-                        backgroundColor: '#283b56'
-                    }
-                }
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                    dataView: {readOnly: false},
-                    restore: {},
-                    saveAsImage: {},
-                    magicType: {
-                    type: ['line', 'bar']
-                  }
-                }
-            },
-            dataZoom: {
-                show: false,
-                start: 0,
-                end: 100
-            },
-            xAxis: {
-                type: 'category',
-                boundaryGap: true,
-                name:'领域',
-                axisLabel: {
-                  interval: 0,
-                  rotate: 45
-                },
-                data: xData
-            },
-            yAxis: {
-                type: 'value',
-                scale: true,
-                name: '个数',
-                max: 300,
-                min: 0,
-                boundaryGap: [0.2, 0.2]
-            },
-            series: [{
-                name:'',
-                type:'bar',
-                data:yData
-            }]
-        };
-
-        // app.count = 11
-        myChart.setOption(option);
-      },
-      drawPie(id,legendData,seriesData){
-        var echarts = require('echarts/lib/echarts');
-        var pieChart = echarts.init(document.getElementById(id));
-        var option = {
-              tooltip : {
-                  trigger: 'item',
-                  formatter: "{a} <br/>{b} : {c} ({d}%)"
-              },
-              legend: {
-                  orient: 'horizontal',
-                  left: 'left',
-                  data: legendData
-                  // data: ['支持政策','打压政策']
-              },
-              series : [
-                  {
-                      name: '',
-                      type: 'pie',
-                      radius : '55%',
-                      center: ['50%', '60%'],
-                      data: seriesData,
-                      // data:[
-                      //     {value:335, name:'支持政策'},
-                      //     {value:310, name:'打压政策'}
-                      // ],
-                      itemStyle: {
-                          emphasis: {
-                              shadowBlur: 10,
-                              shadowOffsetX: 0,
-                              shadowColor: 'rgba(0, 0, 0, 0.5)'
-                          }
-                      }
-                  }
-              ]
-          };
-        pieChart.setOption(option);
-      },
-      rotateX(angleX){
-        var cos = Math.cos(angleX);
-        var sin = Math.sin(angleX);
-        for(let tag of this.tags){
-            var y1 = (tag.y- this.CY) * cos - tag.z * sin  + this.CY;
-            var z1 = tag.z * cos + (tag.y- this.CY) * sin;
-            tag.y = y1;
-            tag.z = z1;
-        } 
-      },
-      rotateY(angleY){
-          var cos = Math.cos(angleY);
-          var sin = Math.sin(angleY);
-          for(let tag of this.tags){
-              var x1 = (tag.x - this.CX) * cos - tag.z * sin + this.CX;
-              var z1 = tag.z * cos + (tag.x-this.CX) * sin;
-              tag.x = x1;
-              tag.z = z1;
-          } 
-      },
-      listener(event){//响应鼠标移动
-          var x = event.clientX - this.CX;
-          var y = event.clientY - this.CY;
-          this.speedX = x*0.0001>0 ? Math.min(this.RADIUS*0.00002, x*0.0001) : Math.max(-this.RADIUS*0.00002, x*0.0001);
-          this.speedY = y*0.0001>0 ? Math.min(this.RADIUS*0.00002, y*0.0001) : Math.max(-this.RADIUS*0.00002, y*0.0001); 
-      },
       fetchData(){
         // console.log('路由发送变化doing...');
         location.reload();
       },
       checkReport(row) {
-        console.log(row);
+        // console.log(row);
         this.show = 4;
       }
     },
@@ -1268,20 +829,32 @@
         var self = this;
         let tags = [];
         // this.type = this.$route.query.type;
-        this.entity = this.$route.query.entity;
+        this.getReport();
+        // this.entity = this.$route.query.entity;
+        this.entity = "人工智能";
+        this.logo = this.$route.query.entity;
         if(this.$route.query.type == "company"){
           this.type.name = "企业";
           this.type.id = 1;
-        } else if(this.$route.query.type == "technology") {
-          this.type.name = "技术";
-          this.type.id = 2;
-        }else if(this.$route.query.type == "patent") {
-          this.type.name = "专利";
-          this.type.id = 3;
-        }
+          this.getCompanyDetail(this.entity);
+          this.getNews();
+          this.getPatent();
+          this.getOutput();
+          } else if(this.$route.query.type == "technology") {
+            this.type.name = "技术";
+            this.type.id = 2;
 
-        this.getTechnologies(this.entity);
-        this.getCompanies(this.entity);
+          }else if(this.$route.query.type == "patent") {
+            this.type.name = "专利";
+            this.type.id = 3;
+          }
+          
+          
+          // this.getTreeData(this.entity);
+          // this.getCompanies();
+          
+        // this.getTechnologies(this.entity);
+        // this.getCompanies(this.entity);
         // axios.get(common.url2+"enterpriseBaseImport/comName",{
         //   params:{
         //     enterprise: this.$route.query.entity
@@ -1324,18 +897,16 @@
         // this.tags = tags;
     },
     mounted(){
-      
         // console.log(this.type);
         // console.log(this.entity);
         
       // console.log(this.$route.query.entity);
       
-      // this.getNews(this.entity);
       // this.getCompanyDetail(this.entity);
       // this.getAbsImport(this.entity);
       
-      this.getTreeData(this.entity);
-      console.log(this.enterpriseList);
+      // this.getTreeData(this.entity);
+      // console.log(this.enterpriseList);
       // this.drawRadar();
       // // this.drawBar();
       // this.drawBarLine("bar",["语音识别","信息传输","零售","计算机网络","图像识别"],[120,88,269,210,300]);
@@ -1358,6 +929,9 @@
       //               {value:335, name:'支持政策'},
       //               {value:310, name:'打压政策'}
       //           ]);
+    },
+    updated(){
+      this.getTreeData(this.entity);
     },
     components:{
       adminHeader, Timeline, TimelineItem, TimelineTitle
@@ -1391,184 +965,177 @@
   }
 
   /* main */
-  .card {
-    background-color: #ffffff;
-    border-radius: 5px;
-    height: 740px;
-    width: 98%;
-    margin: 20px auto;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  #main {
-    overflow: scroll;
-    height: 600px;
-    width: 100%;
-  }
-  .draw-canvas {
-    display: inline-block;
-    height: 700px;
-    width: 49%;
-    background-color: #ffffff;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  #radar, #bar, #patentBar, #paperBar, #getFundBar, #outFundBar {
-    width: 450px;
-    height: 500px;
-    padding-left: 50px;
-  }
-  #radar div, #bar div {
-    width: 450px !important;
-    height: 700px !important;
-  }
-  .draw-canvas-table {
-    display: inline-block;
-    width: 100%;
-    background-color: #ffffff;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  /* 基本信息 */
-  .el-tab-pane{
-    height: 470px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    text-align: left;
-  }
-  .title-output{
-    font-weight: bold;
-    margin: 10px 0 20px 0;
-  }
-  .output-list{
-    margin-top: 10px;
-  }
-  .tag{
-    background-color: #CCEEFF;
-    padding: 3px;
-    border-radius: 5px;
-  }
-  .order{
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    display: inline-block;
-    border-radius: 100px;
-    background-color: dodgerblue;
-    color: #ffffff;
-    margin-right: 10px;
-  }
-  .output-word{
-    margin-right: 15px;
-  }
-  .output-des{
-    font-size: 16px;
-    word-break: break-all;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-    margin-top: 5px;
-  }
-  .pop-trigger{
-    margin-left: 20px;
-    background-color: #84D0FF;
-    height: 70px;
-    line-height: 70px;
-    text-align: center;
-  }
-  .pop-right{
-    width: 15px;
-    background-color: #ccc;
-    padding: 5px;
-    position: absolute;
-    right: 0;
-    top: 200px;
-  }
-  .el-icon-back{
-    position: absolute;
-    right: 25px;
-    top: 250px;
-  }
-  .person{
-    width: 80px;
-    height: 80px;
-  }
-  .company-link {
-    margin-bottom: 20px; 
-  }
-  /* ---nav3--- */
-  .news-card1, .news-card2 {
-    background-color: #ffffff;
-    border-radius: 5px;
-  }
-  .news-card1 {
-    width: 730px;
-    height: 500px;
-    margin: 10px 0;
-    padding: 20px;
-  }
-  .news-card2 {
-    width: 90%;
-    height: 1040px;
-    padding: 20px;
-    margin-top: 10px;
-    text-align: left;
-  }
-  #pie {
-    width: 700px;
-    height: 450px;
-  }
-  .newsList {
-    border-bottom: 1px solid #eee;
-    padding: 10px; 
-    position: relative;
-  }
-  .pop-out {
-    position: absolute;
-    top: 0;
-    left: -220px;
-    width: 200px;
-    border: 1px solid #999999;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #ffffff;
-    box-shadow: -5px 5px 5px #999999;
-  }
-  .cell {
-    text-align: center;
-  }
-  .blank {
-    width: 95%;
-    margin: 10px auto;
-    height: 100%;
-    overflow-y: scroll;
-    border-radius: 15px;
-    padding: 10px 20px;
-    box-sizing: border-box;
-    background-color: #fff;
-    .report{
-      h1 {
-        text-align: center;
+  .container{
+    .card {
+      background-color: #ffffff;
+      border-radius: 5px;
+      height: 740px;
+      width: 98%;
+      margin: 20px auto;
+      padding: 10px;
+      box-sizing: border-box;
+      #main {
+        overflow: scroll;
+        height: 600px;
+        width: 100%;
       }
-      .wrapper-sub, #pie2{
-        float: left;
-        text-align: center;
-        margin-bottom: 20px;
-        .report-chart {
-          width: 520px;
-          height: 400px;
-          border: 1px solid #eee;
-          margin-bottom: 10px;
-          position: relative;
-          text-align: center;
-        }
-      }
-      .wrapper-sub:nth-child(even) {
-          float: right;
+    }
+    
+    .draw-canvas-table{
+      background-color: #ffffff;
+    }
+
+    .basic-info {
+      .el-tab-pane{
+          height: 470px;
+          overflow-x: hidden;
+          overflow-y: scroll;
+          text-align: left;
+          .title-output{
+            font-weight: bold;
+            margin: 10px 0 20px 0;
+          }
+          .company_detail{
+            display: inline-block;
+            line-height: 20px;
+            margin-bottom: 10px;
+            color: rgb(55, 65, 74);
+          }
+          .sub_title{
+            font-weight: bold;
+          }
+          .company-link {
+            margin-bottom: 20px; 
+            .output-list{
+              margin-top: 10px;
+              .tag{
+                background-color: #CCEEFF;
+                padding: 3px;
+                border-radius: 5px;
+              }
+              .order{
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                text-align: center;
+                display: inline-block;
+                border-radius: 100px;
+                background-color: dodgerblue;
+                color: #ffffff;
+                margin-right: 10px;
+              }
+              .output-word{
+                margin-right: 15px;
+              }
+            }
+          }
+          
+          .person{
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ccc;
+          }
         }
     }
+    .blank {
+      width: 95%;
+      margin: 10px auto;
+      height: 100%;
+      overflow-y: scroll;
+      border-radius: 15px;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      .report{
+        h1 {
+          text-align: center;
+        }
+        .wrapper-sub, #pie2{
+          float: left;
+          text-align: center;
+          margin-bottom: 20px;
+          .report-chart {
+            width: 520px;
+            height: 400px;
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            position: relative;
+            text-align: center;
+          }
+        }
+        .wrapper-sub:nth-child(even) {
+            float: right;
+          }
+      }
+    }
   }
+  
+
+  /* 基本信息 */
+  
+
+  // .pop-trigger{
+  //   margin-left: 20px;
+  //   background-color: #84D0FF;
+  //   height: 70px;
+  //   line-height: 70px;
+  //   text-align: center;
+  // }
+  // .pop-right{
+  //   width: 15px;
+  //   background-color: #ccc;
+  //   padding: 5px;
+  //   position: absolute;
+  //   right: 0;
+  //   top: 200px;
+  // }
+  // .el-icon-back{
+  //   position: absolute;
+  //   right: 25px;
+  //   top: 250px;
+  // }
+  
+  
+  /* ---nav3--- */
+  // .news-card1, .news-card2 {
+  //   background-color: #ffffff;
+  //   border-radius: 5px;
+  // }
+  // .news-card1 {
+  //   width: 730px;
+  //   height: 500px;
+  //   margin: 10px 0;
+  //   padding: 20px;
+  // }
+  // .news-card2 {
+  //   width: 90%;
+  //   height: 1040px;
+  //   padding: 20px;
+  //   margin-top: 10px;
+  //   text-align: left;
+  // }
+  // #pie {
+  //   width: 700px;
+  //   height: 450px;
+  // }
+  // .newsList {
+  //   border-bottom: 1px solid #eee;
+  //   padding: 10px; 
+  //   position: relative;
+  // }
+  // .pop-out {
+  //   position: absolute;
+  //   top: 0;
+  //   left: -220px;
+  //   width: 200px;
+  //   border: 1px solid #999999;
+  //   border-radius: 5px;
+  //   padding: 10px;
+  //   background-color: #ffffff;
+  //   box-shadow: -5px 5px 5px #999999;
+  // }
+  // .cell {
+  //   text-align: center;
+  // }
+  
 </style>

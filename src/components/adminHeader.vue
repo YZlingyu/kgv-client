@@ -32,7 +32,7 @@
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         }).then((res, err) => {
-          console.log(res);
+          // console.log(res);
         })
     }
   }

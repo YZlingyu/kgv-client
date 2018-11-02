@@ -40,7 +40,7 @@
     
     <span slot="footer" class="dialog-footer" style="display:flex;justify-content: center;">
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="saveWorksheet">确 定</el-button>
+      <!-- <el-button type="primary" @click="saveWorksheet">确 定</el-button> -->
     </span>
   </el-dialog>
   <el-header>
@@ -160,12 +160,12 @@
             </div>
             <!-- <div class="drag-item border-1px" @drop='drop2($event)' @dragover='allowDrop($event)' @dragleave='dragleave2($event)'><label class="drag-title-label">对比</label></div> -->
             <div class="drag-item border-1px" id="measure-list" @drop='drop3($event)' @dragover='allowDrop($event)' @dragleave='dragleave3($event)'><label class="drag-title-label">度量</label></div>
-            <div class="drag-item border-1px" @drop='drop4($event)' @dragover='allowDrop($event)' @dragleave='dragleave4($event)'><label class="drag-title-label">次轴</label></div>
-            <div class="drag-item border-1px" @drop='drop2($event)' @dragover='allowDrop($event)' @dragleave='dragleave($event)'><label class="drag-title-label">筛选器</label></div>
-            <div class="drag-item border-1px" @drop='drop2($event)' @dragover='allowDrop($event)' @dragleave='dragleave($event)'>
-            <label class="drag-title-label">颜色</label>
-            <el-color-picker v-model="defaultColor"></el-color-picker>
-            </div>
+            <!-- <div class="drag-item border-1px" @drop='drop4($event)' @dragover='allowDrop($event)' @dragleave='dragleave4($event)'><label class="drag-title-label">次轴</label></div>
+            <div class="drag-item border-1px" @drop='drop2($event)' @dragover='allowDrop($event)' @dragleave='dragleave($event)'><label class="drag-title-label">筛选器</label></div> -->
+            <!-- <div class="drag-item border-1px" @drop='drop2($event)' @dragover='allowDrop($event)' @dragleave='dragleave($event)'> -->
+            <!-- <label class="drag-title-label">颜色</label>
+            <el-color-picker v-model="defaultColor"></el-color-picker> -->
+            <!-- </div> -->
           </div>
           <div class="graph-wrapper">
             <div class="graph">
@@ -177,7 +177,7 @@
           </div>
         </div>
         <div class="right-bar" ref="rightBar" :style="{height:clientHeight+'px'}">
-          <right-bar :baseUrl="baseUrl" :option="option" :type="type" :tableName="tableName" :searchmeasure="searchmeasure" :searchdimension="searchdimension" :searchmethods="searchmethods" @update-type="update" @update-option="updateOption"></right-bar>
+          <right-bar :technologyName="technologyName" :baseUrl="baseUrl" :option="option" :type="type" :tableName="tableName" :searchmeasure="searchmeasure" :searchdimension="searchdimension" :searchmethods="searchmethods" @update-type="update" @update-option="updateOption"></right-bar>
         </div>
       </div>
     </el-main>
@@ -201,16 +201,16 @@
         technologys: [],
         technologyChainNames: {},
         technology: '',
-        technologyName: '',
+        technologyName: '人工智能',
         workSheet:[{
-          "name": "",
-          "abscissa": "",
-          "ordinate": "",
-          "technologyId": ""
+          "name": "人工智能",
+          "abscissa": "年,月",
+          "ordinate": "人数,ss",
+          "technologyId": "1"
         }],
         workSheetName: '',
         checkList: [],
-        dialogVisible: true,
+        dialogVisible: false,
         show: 1,
         activeName: 'first',
         showFlag: true,
@@ -222,7 +222,7 @@
         measure: '',
         measureDrag: '',
         chartDate: {},
-        tableName: 'worker',
+        tableName: '',
         myChart: {},
         option: {
           series: []
@@ -234,7 +234,67 @@
         searchmeasure: [],
         searchmethods: [],
         color: '#f00',
-        type: 1 //0柱状图，1堆叠柱状图，2条形图，3条形堆叠图，4折现图，5饼图，6堆叠面积图
+        type: 1 ,//0柱状图，1堆叠柱状图，2条形图，3条形堆叠图，4折现图，5饼图，6堆叠面积图
+        graphData: {
+          barLine: {
+            // xAxis: [ 2013,2014,2015,2016,2017,2018],
+            // seriesData: [72.00, 74.50, 84.7, 89.00, 93.00, 95.00],
+            xAxis: [ "Q1'11", "Q2'11", "Q3'11", "Q4'12", "Q1'12", "Q2'12", "Q3'12", "Q4,12", "Q1,13", "Q2'13", "Q3'13", "Q4'13", "Q1,14", "Q2'14", "Q3'14", "Q4'14", "Q1'15", "Q2'15", "Q3'15", "Q4'15", "Q1'16", "Q2'16"],
+            seriesData: [62, 96, 66, 68, 64, 138, 125, 102, 186, 283, 211, 141, 321, 555, 394, 942, 769, 398, 911, 485, 636, 1049],
+            formatter: "$"
+          },
+          pie: {
+            legendData: ['计算机视觉', '机器人', '自然语言处理', '智能驾驶', '深度学习', '智能金融', '智能医疗', '智能家居', '智能安防', '芯片'],
+            seriesData: [
+                {value:96, name:'计算机视觉'},
+                {value:92, name:'机器人'},
+                {value:77, name:'自然语言处理'},
+                {value:38, name:'智能驾驶'},
+                {value:26, name:'深度学习'},
+                {value:15, name:'智能金融'},
+                {value:10, name:'智能医疗'},
+                {value:9, name:'智能家居'},
+                {value:5, name:'智能安防'},
+                {value:3, name:'芯片'}]
+          },
+          verticalBar: {
+            yAxis: ['计算机视觉', '机器人', '自然语言处理', '智能驾驶', '深度学习', '智能金融', '智能医疗', '智能家居', '智能安防', '芯片'],
+            seriesData: [{
+              type: 'bar',
+              data: [96, 92, 77, 38, 26, 15, 10, 9, 5, 3]
+           }],
+          },
+          barAndLine: {
+            xAxis: [ "Q1'11", "Q2'11", "Q3'11", "Q4'12", "Q1'12", "Q2'12", "Q3'12", "Q4,12", "Q1,13", "Q2'13", "Q3'13", "Q4'13", "Q1,14", "Q2'14", "Q3'14", "Q4'14", "Q1'15", "Q2'15", "Q3'15", "Q4'15", "Q1'16", "Q2'16"],
+            // seriesData: [62, 96, 66, 68, 64, 138, 125, 102, 186, 283, 211, 141, 321, 555, 394, 942, 769, 398, 911, 485, 636, 1049],
+            formatter: "$",
+            // xAxis: ['计算机视觉', '机器人', '自然语言处理', '智能驾驶', '深度学习', '智能金融', '智能医疗', '智能家居', '智能安防', '芯片'],
+            // seriesData: [ {
+            //     type:'bar',
+            //     data:[96, 92, 77, 38, 26, 15, 10, 9, 5, 3]
+            // },
+            seriesData: [ {
+                type:'bar',
+                data:[62, 96, 66, 68, 64, 138, 125, 102, 186, 283, 211, 141, 321, 555, 394, 942, 769, 398, 911, 485, 636, 1049]
+            },
+            {
+                type:'line',
+                yAxisIndex: 1,
+                data:[11, 21, 13, 22, 20, 38, 37, 38, 43, 50, 63, 47, 70, 77, 84, 80, 92, 84, 120, 100, 134, 121]
+            }]
+          },
+          stack: {
+            xAxis: ['计算机视觉', '机器人', '自然语言处理', '智能驾驶', '深度学习', '智能金融', '智能医疗', '智能家居', '智能安防', '芯片'],
+            seriesData: [
+                {
+                    type:'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data:[96, 92, 77, 38, 26, 15, 10, 9, 5, 3]
+                }
+            ]
+          }
+        }
       }
     },
     computed:{
@@ -242,7 +302,29 @@
     watch: {
       type: {
       handler: function(){
-      this.getData('worker',this.type,this.searchdimension,this.searchmeasure, this.searchmethods);
+        console.log(this.type);
+        if(this.type == 2){
+          this.option = this.drawPie(this.graphData.pie.legendData, this.graphData.pie.seriesData);
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          this._init();
+        }else if(this.type == 3){
+          this.option = this.drawVerticalBar(this.graphData.verticalBar.yAxis, this.graphData.verticalBar.seriesData);
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          this._init();
+        }else if(this.type == 4){
+          this.option = this.drawBarLine(this.graphData.barAndLine.xAxis, this.graphData.barAndLine.seriesData, this.graphData.barAndLine.formatter, "");
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          this._init();
+        }else if(this.type == 5){
+          this.option = this.drawStack(this.graphData.stack.xAxis, this.graphData.stack.seriesData);
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          this._init();
+        }else{
+          this.option = this.drawBar(this.graphData.barLine.xAxis, this.graphData.barLine.seriesData, this.graphData.barLine.formatter);
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          this._init();
+        }
+      // this.getData('worker',this.type,this.searchdimension,this.searchmeasure, this.searchmethods);
       },
       //深度观察
       deep: true
@@ -368,8 +450,10 @@
             }
           }
           this.searchdimension = dimensionValues;
-          this.getData(this.tableName, this.type, this.searchdimension, this.searchmeasure, this.searchmethods);
-
+          // this.getData(this.tableName, this.type, this.searchdimension, this.searchmeasure, this.searchmethods);
+          this.option = this.drawBar(this.graphData.barLine.xAxis,[])
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          // this._init();
       },
       drop2(event) {
           event.preventDefault();
@@ -378,14 +462,15 @@
           event.preventDefault();
           //申明方法DOM
           let computeDisplay = document.createElement("i");
-          computeDisplay.innerText = '(求和)';
+          computeDisplay.innerText = '';
+          // computeDisplay.innerText = '(求和)';
           let computeSelect = document.createElement("div");
           var searchMethodsSelect = this.searchmethods;
       
-          computeSelect.setAttribute('class','computed');
-          computeSelect.innerHTML = '<ul index='+searchMethodsSelect.length+' class="measure-compute"><li><a data-method="sum">求和</a></li><li><a data-method="avg">平均数</a></li><li><a data-method="count">计数</a></li><li><a data-method="max">最大值</a></li><li><a data-method="min">最小值</a></li></ul>';
+          // computeSelect.setAttribute('class','computed');
+          // computeSelect.innerHTML = '<ul index='+searchMethodsSelect.length+' class="measure-compute"><li><a data-method="sum">求和</a></li><li><a data-method="avg">平均数</a></li><li><a data-method="count">计数</a></li><li><a data-method="max">最大值</a></li><li><a data-method="min">最小值</a></li></ul>';
           //将methods DOM加入拖拽DOM元素中
-          searchMethodsSelect.push('sum');
+          // searchMethodsSelect.push('sum');
           this.searchmeasure.push(this.measureDrag.getElementsByTagName('a')[0].getAttribute('data-column'));
           this.measureDrag.getElementsByTagName("a")[0].appendChild(computeDisplay);
           this.measureDrag.getElementsByTagName("a")[0].appendChild(computeSelect);
@@ -399,25 +484,29 @@
           event.target.appendChild(this.measureDrag);
 
           var that = this;
-          $('.measure-compute li').on('click',function(){
-            var index = $(this).parent().attr("index");
-            //更新显示文字
-            let selectMethodText = $(this).find('a').text();
-            $(this).parents('div').prev('i').text('(' + selectMethodText + ')');
-            //保存对应methods
-            let selectMethod = $(this).find('a').attr('data-method');
-            $(this).parent().hide();
-            searchMethodsSelect[index] = selectMethod;
-            // console.log(searchMethodsSelect);
-            that.getData(that.tableName, that.type, that.searchdimension, that.searchmeasure, searchMethodsSelect);
-            return false;
-          });
+          // $('.measure-compute li').on('click',function(){
+          //   var index = $(this).parent().attr("index");
+          //   //更新显示文字
+          //   let selectMethodText = $(this).find('a').text();
+          //   $(this).parents('div').prev('i').text('(' + selectMethodText + ')');
+          //   //保存对应methods
+          //   let selectMethod = $(this).find('a').attr('data-method');
+          //   $(this).parent().hide();
+          //   console.log($(this).parent())
+          //   searchMethodsSelect[index] = selectMethod;
+          //   // console.log(searchMethodsSelect);
+          //   this.option = {"yAxis":{"name":"人数","type":"value"},"xAxis":{"name":"性别","type":"category","data":["女","男"],"boundaryGap":true,"axisLabel":{"show":true,"interval":"0","inside":false}},"legend":{"data":["人数"]},"series":[{"type":"bar","name":"人数","stack":"0","color":null,"data":[5291040,5128368],"areaStyle":null,"yAxisIndex":0,"xAxisIndex":0}],"tooltip":{"show":true,"trigger":"axis","formatter":""}}
+          //   this.myChart.setOption(that.option,true);
+          //   // that.getData(that.tableName, that.type, that.searchdimension, that.searchmeasure, searchMethodsSelect);
+          //   return false;
+          // });
 
 
           this.searchmethods = searchMethodsSelect;
           // console.log(this.searchmeasure);
-        
-          this.getData(this.tableName, this.type, this.searchdimension, this.searchmeasure, this.searchmethods);
+          this.option = this.drawBar(this.graphData.barLine.xAxis,this.graphData.barLine.seriesData,this.graphData.barLine.formatter)
+          this.myChart.setOption(this.option,true);//true表示和之前的option合并
+          // this.getData(this.tableName, this.type, this.searchdimension, this.searchmeasure, this.searchmethods);
       },
       drop4(event) {
           event.preventDefault();
@@ -517,6 +606,233 @@
         //   }
         // })
       },
+      // drawRadar(id, indicator, data){
+      //   var option = {
+      //         radar: {
+      //             // shape: 'circle',
+      //             name: {
+      //                 textStyle: {
+      //                     color: '#fff',
+      //                     backgroundColor: '#999',
+      //                     borderRadius: 3,
+      //                     padding: [3, 5]
+      //               }
+      //             },
+      //             indicator: [
+      //               { name: '社交智能', max: 100},
+      //               { name: '知识表示', max: 100},
+      //               { name: '随机优化', max: 100},
+      //               { name: '遗传算法', max: 100},
+      //               { name: '计算机性能分析', max: 100},
+      //               { name: '吞吐量', max: 100}
+      //             ]
+      //         },
+      //         series: [{
+      //             type: 'radar',
+      //             // areaStyle: {normal: {}},
+      //             data : [
+      //                 {
+      //                     value : [40, 55, 33, 17, 5, 8],
+      //                     name : '企业'
+      //                 }
+      //             ]
+      //         }]
+      //     };
+
+      //   radarChart.setOption(option);
+      // },
+      drawBar(datax, seriesData, formatter){
+        var option = {
+            color: ['#3398DB'],
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '20%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    data : datax,
+                    nameRotate: 180,
+                    axisLabel: {
+                      rotate: 40, 
+                    },
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    axisLabel: {
+                      formatter: '{value}'+formatter
+                    },
+                }
+            ],
+            series : [
+                {
+                    type:'bar',
+                    barWidth: '60%',
+                    data: seriesData
+                }
+            ]
+        };
+        return option;
+      },
+      drawBarLine(xAxis, seriesData, formatterX, formatterY) {
+        var that = this;
+        var option = {
+             tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                      color: '#999'
+                  }
+              }
+          },
+          toolbox: {
+              feature: {
+                  dataView: {show: true, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: true},
+                  saveAsImage: {show: true}
+              }
+          },
+          xAxis: [
+              {
+                  type: 'category',
+                  data: xAxis,
+                  axisPointer: {
+                      type: 'shadow'
+                  }
+              }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              axisLabel: {
+                formatter: '{value}'+formatterX
+              },
+            },
+            {
+              type: 'value',
+              axisLabel: {
+                formatter: '{value}'+formatterY
+              },
+            },
+          ],
+          series: seriesData
+        };
+        return option;
+      },
+      drawPie(legendData,seriesData){
+        var option = {
+              tooltip : {
+                  trigger: 'item',
+                  formatter: "{a} <br/>{b} : {c} ({d}%)"
+              },
+              legend: {
+                  orient: 'horizontal',
+                  left: 'left',
+                  data: legendData
+                  // data: ['支持政策','打压政策']
+              },
+              series : [
+                  {
+                      name: '',
+                      type: 'pie',
+                      radius : '55%',
+                      center: ['50%', '60%'],
+                      data: seriesData,
+                      // data:[
+                      //     {value:335, name:'支持政策'},
+                      //     {value:310, name:'打压政策'}
+                      // ],
+                      itemStyle: {
+                          emphasis: {
+                              shadowBlur: 10,
+                              shadowOffsetX: 0,
+                              shadowColor: 'rgba(0, 0, 0, 0.5)'
+                          }
+                      }
+                  }
+              ]
+          };
+        return option;
+      },
+      drawStack(xAxisData,seriesData){
+        var option = {
+              tooltip : {
+                  trigger: 'axis',
+                  axisPointer: {
+                      type: 'cross',
+                      label: {
+                          backgroundColor: '#6a7985'
+                      }
+                  }
+              },
+              toolbox: {
+                  feature: {
+                      saveAsImage: {}
+                  }
+              },
+              grid: {
+                  left: '3%',
+                  right: '4%',
+                  bottom: '3%',
+                  containLabel: true
+              },
+               xAxis : [
+                  {
+                      type : 'category',
+                      boundaryGap : false,
+                      data : xAxisData
+                  }
+              ],
+              yAxis : [
+                  {
+                      type : 'value'
+                  }
+              ],
+              series : seriesData
+          };
+        return option;
+      },
+      drawVerticalBar(yAxis,series){
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: yAxis
+            },
+            series: series
+        };
+        return option;
+      }
     },
     created(){//初始化标签位置
        axios.get(common.url2+"getTechnologyList",{
@@ -662,7 +978,7 @@ a
           margin: 0 5px;
           padding: 0px 10px;
           a
-            color: #000;
+            color: #fff;
             font-weight: 700;
             .computed
               position: absolute;

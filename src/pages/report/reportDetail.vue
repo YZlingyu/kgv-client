@@ -52,13 +52,18 @@
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>行业报告</el-breadcrumb-item>
         <el-breadcrumb-item>报告管理</el-breadcrumb-item>
-        <el-breadcrumb-item>人工智能2018年工业报告v1.0</el-breadcrumb-item>
+        <el-breadcrumb-item>{{reportName}}</el-breadcrumb-item>
       </el-breadcrumb>
       <el-row class="blank">
         <div class="report">
-          <h1>人工智能2018年工业报告v1.0</h1>
-          <el-row class="clearfloat">
-            <div class="wrapper-sub">
+          <h1>{{reportName}}</h1>
+          <div class="wrapper">
+            <div class="wrapper-sub" v-for="(item, index) in graphList" :key="item.id">
+              <div class="report-chart"></div>
+              <h6>{{item.name}}</h6>
+              <p>{{item.note}}</p>
+            </div>
+            <!-- <div class="wrapper-sub">
               <div class="report-chart" id="bar2"></div>
               <h6>人工智能成果量统计图</h6>
             </div>
@@ -73,8 +78,8 @@
             <div class="wrapper-sub">
               <div class="report-chart" id="pie2"></div>
               <h6>chengguo</h6>
-            </div>
-          </el-row>
+            </div> -->
+          </div>
         </div>
       </el-row>
     </el-main>
@@ -86,28 +91,17 @@
   import adminHeader from "../../components/adminHeader.vue"
   import axios from 'axios'
   import * as common from '../../common/common.js'
+  import $ from 'jquery';
+  import echarts from 'echarts';
   export default {
     data() {
       return {
+        reportName: "",
         show: 1,
         activeName: 'first',
-        tableData: [{
-          name: '2016-05-03',
-          date: '人工智能2018年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-02',
-          date: '人工智能2017年工业报告v1.1',
-          region: '人工智能'
-        }, {
-          name: '2016-05-04',
-          date: '人工智能2017年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-01',
-          date: '人工智能2016年工业报告v1.0',
-          region: '人工智能'
-        }]
+        id: "",
+        graphList: [],
+        myChart: []
       }
     },
     computed:{
@@ -125,7 +119,7 @@
         console.log(row);
         
       },
-        drawRadar(id, indicator, data){
+      drawRadar(id, indicator, data){
         var echarts = require('echarts/lib/echarts');
         var radarChart = echarts.init(document.getElementById(id));
         var option = {
@@ -167,6 +161,11 @@
         var barChart = echarts.init(document.getElementById(id));
         var option = {
             color: ['#3398DB'],
+            title: {
+                text: '天气情况统计',
+                subtext: '虚构数据',
+                left: 'center'
+            },
             tooltip : {
                 trigger: 'axis',
                 axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -266,6 +265,11 @@
         var echarts = require('echarts/lib/echarts');
         var pieChart = echarts.init(document.getElementById(id));
         var option = {
+              title: {
+                  text: '天气情况统计',
+                  subtext: '虚构数据',
+                  left: 'center'
+              },
               tooltip : {
                   trigger: 'item',
                   formatter: "{a} <br/>{b} : {c} ({d}%)"
@@ -386,18 +390,58 @@
       }
     },
     created(){//初始化标签位置
+      this.id = this.$route.query.id;
+      var that = this;
+      axios.get(common.url2+"getAllReport",{
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          if(res){
+            console.log(res.data.data);
+            console.log(this.id);
+            var res = res.data.data;
+            var layouts = JSON.parse(res[this.id].layouts);
+            var names = JSON.parse(res[this.id].chartName);
+            var notes = JSON.parse(res[this.id].chartNote);
+            console.log(res[this.id]);
+            that.reportName = res[this.id].reportName
+            // this.graphList = layouts;
+            for(var i=0; i<res[this.id].layouts.length; i++){
+              this.graphList.push({
+                name: names[i].name,
+                note: notes[i].note,
+                layout: layouts[i]
+              })
+            }
+            console.log(this.graphList)
+          }
+          else{
+            console.log(err);
+          }
+        })
     },
     mounted(){
-      this.entity = this.$route.query.entity;
-      this.drawRadar('radar2');
-      this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
-      this.drawPie('pie2',
-                ['支持政策','打压政策'],
-                [
-                    {value:335, name:'支持政策'},
-                    {value:310, name:'打压政策'}
-                ]);
+      // this.drawRadar('radar2');
+      // this.drawBar('bar2',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawBar('bar3',['社交智能', '知识表示', '随机优化', '遗传算法', '计算机性能分析', '吞吐量'],[10, 24, 8, 2, 0, 16]);
+      // this.drawPie('pie2',
+      //           ['支持政策','打压政策'],
+      //           [
+      //               {value:335, name:'支持政策'},
+      //               {value:310, name:'打压政策'}
+      //           ]);
+    },
+    updated() {
+      this.$nextTick(function () {
+      })
+      // console.log(JSON.parse(this.graphList[0]))
+      for(var i=0; i<this.graphList.length; i++){
+          // console.log(JSON.parse(this.graphList[i]));
+          this.myChart[i] = echarts.init(document.getElementsByClassName('report-chart')[i]);
+          this.myChart[i].setOption(this.graphList[i].layout);
+        }
     },
     components:{
       adminHeader
@@ -442,24 +486,26 @@
          h1 {
            text-align: center;
          }
-         .wrapper-sub, #pie2{
-           float: left;
-           text-align: center;
-           margin-bottom: 20px;
-           .report-chart {
-             width: 520px;
-             height: 400px;
-             border: 1px solid #eee;
-             margin-bottom: 10px;
-             position: relative;
-             text-align: center;
-           }
-         }
-         .wrapper-sub:nth-child(even) {
-             float: right;
-           }
-       }
-     }
-   }
+          .wrapper{
+            display: flex;
+            flex-wrap: wrap;
+            // justify-content: space-between;
+            .wrapper-sub, #pie2{
+              text-align: center;
+              margin-bottom: 20px;
+              margin-right: 30px;
+              .report-chart {
+                width: 500px;
+                height: 400px;
+                border: 1px solid #eee;
+                margin-bottom: 10px;
+                position: relative;
+                text-align: center;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 </style>

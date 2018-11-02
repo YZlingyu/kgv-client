@@ -8,14 +8,14 @@
       <div class="graph-type">
         <div class="right-title" style="font-weight: bold;">图表类型</div>
         <div class="graph-content clearfix">
-          <i class="icon-bar" @click="update(0)">
+          <i class="icon-bar" @click="update(1)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
               <div class="bar-title">柱形图</div>
               <div>1个维度,1个或多个度量</div>
             </div>
           </i>
-          <i class="icon-pie" @click="update(5)">
+          <i class="icon-pie" @click="update(2)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
               <div class="bar-title">饼图</div>
@@ -24,7 +24,7 @@
             </div>
           </i>
           <!-- <i class="icon-pie1_1"></i> -->
-          <i class="icon-column" @click="update(2)">
+          <i class="icon-column" @click="update(3)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
               <div class="bar-title">条形图</div>
@@ -42,7 +42,7 @@
             </div>
           </i>
           <!-- <i class="icon-line1_1"></i> -->
-          <i class="icon-lineStack" @click="update(6)">
+          <i class="icon-lineStack" @click="update(5)">
             <div class="angle"></div>
             <div class="icon-bar-hover">
               <div class="bar-title">堆积图</div>
@@ -75,7 +75,7 @@
           <input type="checkbox" name="">自动</div>
         </div>
       <!-- <div class="right-title">辅助线</div> -->
-      <div class="right-title"><input type="checkbox" name="">显示缩略轴</div>
+      <!-- <div class="right-title"><input type="checkbox" name="">显示缩略轴</div> -->
       <div>
         <div class="right-title">图表备注</div>
         <el-input
@@ -93,6 +93,9 @@
 
 <script>
 // import {doPost} from "../../../components/graphBase/js/ajaxUtils.js";
+import * as common from '../../common/common.js'
+import axios from 'axios'
+let qs = require("qs");
 export default {
   props: {
     baseUrl: {
@@ -115,6 +118,9 @@ export default {
     },
     searchmethods: {
       type: Array
+    },
+    technologyName: {
+      type: String
     }
   },
   data() {
@@ -180,19 +186,20 @@ export default {
       }
     },
     savaGraph(){
-      let saveOptions = {
-        "gId": 11,
-        "tableName": this.tableName,
-        "dim": this.searchdimension.join(","),
-        "values": this.searchmeasure.join(","),
-        "methods": this.searchmethods.join(","),
-        "compare": '',
-        "options": JSON.stringify(this.option),
-        "type": this.type
-      }
-      var saveOptionsString = JSON.stringify(saveOptions);
+      // let saveOptions = {
+      //   "gId": 11,
+      //   "tableName": this.tableName,
+      //   "dim": this.searchdimension.join(","),
+      //   "values": this.searchmeasure.join(","),
+      //   "methods": this.searchmethods.join(","),
+      //   "compare": '',
+      //   "options": JSON.stringify(this.option),
+      //   "type": this.type
+      // }
+      // let saveOptions = JSON.stringify(this.option);
+      var saveOptionsString = JSON.stringify(this.option);
       // console.log(saveOptionsString);
-      this._doPost(this.baseUrl+'graph/save_graph', saveOptionsString);
+      // this._doPost(this.baseUrl+'graph/save_graph', saveOptionsString);
       // this.$http.post(this.baseUrl+'graph/save_graph',
       //  {graph:{gId: 3,tableName:"worker"}}
       //  ).then((response) => {
@@ -201,6 +208,22 @@ export default {
       //   //   alert("保存成功");
       //   // }
       // });
+      var datatosend = qs.stringify({
+              chartId: '',
+              layout : saveOptionsString,
+              chartInfo: this.title,
+              tech: this.technologyName,
+              note: this.note
+            })
+      axios
+        .post(common.url2+"saveChart", datatosend)
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert("error!");
+        });
     }
   },
   watch: {

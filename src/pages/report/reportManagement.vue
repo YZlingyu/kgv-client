@@ -96,23 +96,7 @@
       return {
         show: 1,
         activeName: 'first',
-        tableData: [{
-          name: '2016-05-03',
-          date: '人工智能2018年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-02',
-          date: '人工智能2017年工业报告v1.1',
-          region: '人工智能'
-        }, {
-          name: '2016-05-04',
-          date: '人工智能2017年工业报告v1.0',
-          region: '人工智能'
-        }, {
-          name: '2016-05-01',
-          date: '人工智能2016年工业报告v1.0',
-          region: '人工智能'
-        }]
+        tableData: []
       }
     },
     computed:{
@@ -128,10 +112,32 @@
       },
       checkReport(row) {
         console.log(row);
-        this.$router.push({path: "./reportDetail"}) 
+        this.$router.push({path: "./reportDetail?id="+row.id}) 
       }
     },
     created(){//初始化标签位置
+       axios.get(common.url2+"getAllReport",{
+          datatype:'jsonp',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then((res, err) => {
+          if(res){
+            var res = res.data.data;
+            console.log(res);
+            for(var i=0; i<res.length; i++){
+              this.tableData.push({
+                "name": res[i].reportName,
+                "date": res[i].createTime,
+                "region": res[i].tech,
+                "id": i
+              })
+            }
+          }
+          else{
+            console.log(err);
+          }
+        })
     },
     mounted(){
       this.entity = this.$route.query.entity;
